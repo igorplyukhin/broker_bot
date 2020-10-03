@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface CommandAnnotation {
     String name();
-
-    String info() default "";
+    String description() default "";
 }
 
