@@ -5,13 +5,10 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-public class MarketCommand extends BotCommand {
-    MarketCommand(String commandIdentifier, String description) {
-        super(commandIdentifier, description);
-    }
+public class MarketCommand implements Command {
 
-    void execute(AbsSender sender, SendMessage message, User user) {
-        //sender.execute(message);
-
+    @Override
+    public SendMessage execute() {
+        return null;
     }
 }
