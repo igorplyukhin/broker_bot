@@ -1,50 +1,28 @@
-import entities.User;
+import commands.CommandsManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.lang.reflect.InvocationTargetException;
+import java.security.InvalidKeyException;
 
 
 public class BrokerBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage()
-                    .setChatId(update.getMessage().getChatId());
-            System.out.println(update.getMessage().getText());
-            String messageText = defineCommand(update.getMessage().getText(), update.getMessage().getChatId());
-            message.setText(messageText);
+            var commandName = parseCommand(update.getMessage().getText());
+
             try {
+                var command = CommandsManager.getCommand(commandName).getDeclaredConstructor().newInstance();
+                var message = command.execute(update);
                 execute(message); // Call method to send the message
-            } catch (TelegramApiException e) {
+            } catch (InvalidKeyException | InstantiationException | IllegalAccessException | InvocationTargetException
+                    | NoSuchMethodException | TelegramApiException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-
-
-    private String defineCommand(String messageText, long chatID) {
-        switch (parseCommand(messageText)) {
-            case "/start" -> {
-                User result = Program.repository.createUser(chatID);
-                if (result == null)
-                    return "User already exists";
-                else
-                    return "User created";
-            }
-            case "/balance" -> {
-                User user = Program.repository.getUser(chatID);
-                if (user == null)
-                    return "User does not exist";
-                else
-                    return user.toStringBalance();
-            }
-            default -> {
-                return "NotImplemented";
-            }
-        }
-
     }
 
     @Override
