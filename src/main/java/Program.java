@@ -1,3 +1,4 @@
+import com.mashape.unirest.http.exceptions.UnirestException;
 import commands.CommandsReflection;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -8,9 +9,9 @@ public class Program {
 
     public static Repository repository = new Repository();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnirestException {
 
-        CommandsReflection.buildCommands();
+        /*CommandsReflection.buildCommands();
         ApiContextInitializer.init();
 
         TelegramBotsApi botsApi = new TelegramBotsApi();
@@ -19,7 +20,9 @@ public class Program {
             botsApi.registerBot(new BrokerBot());
         } catch (TelegramApiException e) {
             e.printStackTrace();
-        }
+        }*/
+        var r = API.YahooAPI.getQuotes();
+        System.out.println(r);
     }
 }
 

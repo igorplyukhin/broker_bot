@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandsReflection {
-    private static final Map<String, Command> commands = new HashMap<>();
+    private static final Map<String, Class<? extends Command>> commands = new HashMap<>();
 
     public static void buildCommands(){
         var commandClasses = new Reflections(Command.class).getSubTypesOf(Command.class);
