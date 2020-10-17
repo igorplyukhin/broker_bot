@@ -21,9 +21,9 @@ public class CommandsManager {
         }
     }
 
-    public static Class<? extends Command> getCommand(String commandName) throws InvalidKeyException {
+    public static Class<? extends Command> getCommand(String commandName){
         if (!commands.containsKey(commandName))
-            throw new InvalidKeyException();
+            return commands.get("/unknown");
         return commands.get(commandName);
     }
 }

@@ -18,7 +18,8 @@ public class BrokerBot extends TelegramLongPollingBot {
                 var command = CommandsManager.getCommand(commandName).getDeclaredConstructor().newInstance();
                 var message = command.execute(update);
                 execute(message); // Call method to send the message
-            } catch (InvalidKeyException | InstantiationException | IllegalAccessException | InvocationTargetException
+            }
+            catch (InstantiationException | IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | TelegramApiException e) {
                 e.printStackTrace();
             }
