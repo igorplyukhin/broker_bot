@@ -12,29 +12,32 @@ import java.io.IOException;
 import java.util.Collection;
 
 @CommandAnnotation(name = "/market", description = "Show user's balance")
-public class MarketCommand implements Command {
+public class MarketCommand extends Command {
     private static final String[] stocks = new String[]{"AMD", "IBM", "AAPl", "INTC", "BABA", "TSLA", "AIR.PA", "YHOO"};
 
+    public MarketCommand(Update update) {
+        super(update);
+    }
+
     @Override
-    public SendMessage execute(Update update) {
-        long chatID = update.getMessage().getChatId();
-        var message = new SendMessage().setChatId(chatID);
+    public SendMessage execute() {
+        var message = new SendMessage().setChatId(getChatID());
         var quotes = "";
-        try{
+        try {
             quotes = quotesToString(YahooFinance.get(MarketCommand.stocks).values());
-        } catch (IOException e){
+        } catch (IOException e) {
             quotes = "API Error";
         }
         return message.setText(quotes);
     }
 
-    private String quotesToString(Collection<yahoofinance.Stock> quotes){
+    private String quotesToString(Collection<yahoofinance.Stock> quotes) {
         var res = new StringBuilder();
-        for (var q : quotes){
+        for (var q : quotes) {
             res.append(q.toString());
             res.append("\r\n");
         }
-        return  res.toString();
+        return res.toString();
     }
 
 }

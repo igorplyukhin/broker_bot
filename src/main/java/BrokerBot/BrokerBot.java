@@ -1,25 +1,28 @@
+package BrokerBot;
+
 import commands.CommandsManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import repository.Repository;
+import repository.TestRepository;
 
 import java.lang.reflect.InvocationTargetException;
-import java.security.InvalidKeyException;
 
 
 public class BrokerBot extends TelegramLongPollingBot {
+    public static final Repository Repository = new TestRepository();
+
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            var commandName = parseCommand(update.getMessage().getText());
-
+            var commandName = getCommandName(update.getMessage().getText());
             try {
-                var command = CommandsManager.getCommand(commandName).getDeclaredConstructor().newInstance();
-                var message = command.execute(update);
+                var command = CommandsManager.getCommand(commandName)
+                        .getDeclaredConstructor(Update.class).newInstance(update);
+                var message = command.execute();
                 execute(message); // Call method to send the message
-            }
-            catch (InstantiationException | IllegalAccessException | InvocationTargetException
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException
                     | NoSuchMethodException | TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -36,7 +39,7 @@ public class BrokerBot extends TelegramLongPollingBot {
         return System.getenv("BrokerBotToken");
     }
 
-    private String parseCommand(String text) {
+    private String getCommandName(String text) {
         String[] splitText = text.split(" ");
         return splitText[0];
     }

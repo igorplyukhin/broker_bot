@@ -1,7 +1,7 @@
 package di;
 
 import repository.Repository;
-import repository.RepositoryImpl;
+import repository.TestRepository;
 
 import java.util.HashMap;
 
@@ -11,7 +11,7 @@ public class Factories {
     public static Repository getRepository(String name){
         if (instances.containsKey(name))
             return instances.get(name);
-        var rep = new RepositoryImpl();
+        var rep = new TestRepository();
         instances.put(name, rep);
         return rep;
     }

@@ -6,17 +6,17 @@ import enums.Actives;
 import java.util.HashMap;
 
 
-public class RepositoryImpl implements Repository{
+public class TestRepository implements Repository {
 
     private static final HashMap<Long, User> users = new HashMap<>();
-    private static final HashMap<Actives, String> quotes= new HashMap<>(){{
+    private static final HashMap<Actives, String> quotes = new HashMap<>() {{
         put(Actives.AAPL, "19$");
         put(Actives.GOOGL, "1$");
     }};
 
 
     @Override
-    public String getQuote(Actives quoteName){
+    public String getQuote(Actives quoteName) {
         return quoteName.toString() + " : " + quotes.get(quoteName);
     }
 
@@ -32,6 +32,7 @@ public class RepositoryImpl implements Repository{
         return 0;
     }
 
+    @Override
     public User createUser(long userID) {
         if (users.containsKey(userID))
             return null;
@@ -40,6 +41,7 @@ public class RepositoryImpl implements Repository{
         return users.get(userID);
     }
 
+    @Override
     public User getUser(long userID) {
         return users.get(userID);
     }

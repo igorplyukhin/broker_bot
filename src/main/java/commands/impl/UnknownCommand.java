@@ -7,12 +7,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 
 @CommandAnnotation(name = "/unknown", description = "no such command")
-public class UnknownCommand implements Command {
+public class UnknownCommand extends Command {
+    public UnknownCommand(Update update) {
+        super(update);
+    }
+
     @Override
-    public SendMessage execute(Update update) {
-        long chatID = update.getMessage().getChatId();
-        var message = new SendMessage().setChatId(chatID);
-        message.setText("Not Implemented");
-        return message;
+    public SendMessage execute() {
+        return getNewMessage().setText("Not Implemented");
     }
 }

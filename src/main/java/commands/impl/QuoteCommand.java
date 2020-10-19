@@ -1,22 +1,24 @@
 package commands.impl;
 
+import BrokerBot.BrokerBot;
 import commands.Command;
 import commands.CommandAnnotation;
 import di.Factories;
 import enums.Actives;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import repository.RepositoryImpl;
+import repository.TestRepository;
 
 
 @CommandAnnotation(name = "/get_quote", description = "Show user's balance")
-public class QuoteCommand implements Command {
+public class QuoteCommand extends Command {
+    public QuoteCommand(Update update) {
+        super(update);
+    }
+
     @Override
-    public SendMessage execute(Update update) {
-        long chatID = update.getMessage().getChatId();
-        var message = new SendMessage().setChatId(chatID);
-        var quote = Factories.getRepository(RepositoryImpl.class.getName()).getQuote(Actives.AAPL);
-        message.setText(quote);
-        return message;
+    public SendMessage execute() {
+        var quote = BrokerBot.Repository.getQuote(Actives.AAPL);
+        return getNewMessage().setText(quote);
     }
 }
