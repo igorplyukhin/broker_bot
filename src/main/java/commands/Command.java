@@ -16,7 +16,7 @@ public abstract class Command {
 
     public abstract SendMessage execute();
 
-    public SendMessage getNewMessage() {
+    public SendMessage createNewMessage() {
         return new SendMessage().setChatId(chatID);
     }
 }

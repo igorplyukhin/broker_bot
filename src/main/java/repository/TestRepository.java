@@ -2,34 +2,34 @@ package repository;
 
 import entities.User;
 import enums.Actives;
+import yahoofinance.Stock;
+import yahoofinance.quotes.stock.StockQuote;
 
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class TestRepository implements Repository {
 
     private static final HashMap<Long, User> users = new HashMap<>();
-    private static final HashMap<Actives, String> quotes = new HashMap<>() {{
-        put(Actives.AAPL, "19$");
-        put(Actives.GOOGL, "1$");
+    private static final Map<String, Stock> quotes = new HashMap<>() {{
+        var q = new StockQuote("AAPL");
+        q.setPrice(BigDecimal.valueOf(100));
+        var a = new Stock("AAPL");
+        a.setQuote(q);
+        put("AAPL", a);
     }};
-
 
     @Override
     public String getQuote(Actives quoteName) {
-        return quoteName.toString() + " : " + quotes.get(quoteName);
+        return quoteName.toString() + " : " + quotes.get("AAPL");
     }
 
-    public double getQuotes(Actives activesFrom, Actives activesTo) {
-        if (activesTo == activesFrom)
-            return 1;
-        if (activesFrom == Actives.RUB && activesTo == Actives.USD) {
-            return 77;
-        }
-        if (activesFrom == Actives.USD && activesTo == Actives.RUB) {
-            return 1 / 77;
-        }
-        return 0;
+    @Override
+    public Collection<Stock> getQuotes() {
+        return quotes.values();
     }
 
     @Override
