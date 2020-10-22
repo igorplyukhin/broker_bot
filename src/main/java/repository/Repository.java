@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface Repository {
-    String getQuote(Actives quoteName);
+    Stock getQuote(String quoteName);
     Collection<Stock> getQuotes();
     User createUser(long ID);
     User getUser(long ID);

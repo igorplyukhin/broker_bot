@@ -23,8 +23,8 @@ public class TestRepository implements Repository {
     }};
 
     @Override
-    public String getQuote(Actives quoteName) {
-        return quoteName.toString() + " : " + quotes.get("AAPL");
+    public Stock getQuote(String quoteName) {
+        return quotes.get("AAPL");
     }
 
     @Override

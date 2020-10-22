@@ -4,6 +4,7 @@ import commands.CommandsManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import repository.ApiRepository;
 import repository.Repository;
 import repository.TestRepository;
 
@@ -11,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 
 
 public class BrokerBot extends TelegramLongPollingBot {
-    public static final Repository Repository = new TestRepository();
+    public static final Repository Repository = new ApiRepository();
 
     @Override
     public void onUpdateReceived(Update update) {

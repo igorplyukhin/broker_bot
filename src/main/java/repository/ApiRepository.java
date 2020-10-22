@@ -16,8 +16,12 @@ public class ApiRepository implements Repository {
             "INTC", "BABA", "TSLA", "AIR.PA"};
 
     @Override
-    public String getQuote(Actives quoteName) {
-        return null;
+    public Stock getQuote(String quoteName) {
+        try {
+            return YahooFinance.get(quoteName);
+        }catch (IOException e){
+            return null;
+        }
     }
 
     @Override

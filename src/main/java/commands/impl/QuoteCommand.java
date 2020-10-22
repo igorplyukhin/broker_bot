@@ -16,7 +16,10 @@ public class QuoteCommand extends Command {
 
     @Override
     public SendMessage execute() {
-        var quote = BrokerBot.Repository.getQuote(Actives.AAPL);
+        var quote = BrokerBot.Repository.getQuote("GOOGL").toString();
+        if (quote == null)
+            return createNewMessage().setText("API is unreachable now");
+
         return createNewMessage().setText(quote);
     }
 }
