@@ -6,5 +6,5 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 
 public interface Answer {
-    SendMessage execute(String response);
+    SendMessage handleAnswer(String response);
 }

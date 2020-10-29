@@ -38,7 +38,6 @@ public class ApiRepository implements Repository {
     public User createUser(long userID) {
         if (users.containsKey(userID))
             return null;
-
         users.put(userID, new User(userID));
         states.put(userID, State.DEFAULT);
         return users.get(userID);
@@ -51,15 +50,11 @@ public class ApiRepository implements Repository {
 
     @Override
     public void setUserState(long ID, State state) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
         states.put(ID, state);
     }
 
     @Override
     public State getUserState(long ID) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
         return states.get(ID);
     }
 }

@@ -2,6 +2,7 @@ package commands;
 
 import answer.Answer;
 import answer.AnswerAnnotation;
+import enums.State;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class CommandsManager {
     private static final Map<String, Class<? extends Command>> commands = new HashMap<>();
-    private static final Map<String, Class<? extends Answer>> answers = new HashMap<>();
+    private static final Map<State, Class<? extends Answer>> answers = new HashMap<>();
     private static final Reflections reflections = new Reflections(Command.class);
 
     public static void buildCommands() {
@@ -36,6 +37,10 @@ public class CommandsManager {
         if (!commands.containsKey(commandName))
             return commands.get("/unknown");
         return commands.get(commandName);
+    }
+
+    public static Class<? extends Answer> getAnswer(State userState) {
+        return answers.get(userState);
     }
 }
 
