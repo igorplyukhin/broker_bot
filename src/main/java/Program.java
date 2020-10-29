@@ -8,8 +8,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
 
 public class Program{
-    public static void main(String[] args) throws UnirestException, IOException {
+    public static void main(String[] args) {
         CommandsManager.buildCommands();
+        CommandsManager.buildAnswers();
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
 

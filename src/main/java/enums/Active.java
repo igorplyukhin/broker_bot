@@ -1,6 +1,6 @@
 package enums;
 
-public enum Actives {
+public enum Active {
     RUB,
     USD,
     AAPL,

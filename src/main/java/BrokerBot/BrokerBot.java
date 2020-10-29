@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import repository.ApiRepository;
 import repository.Repository;
-import repository.TestRepository;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -19,8 +18,8 @@ public class BrokerBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             var commandName = getCommandName(update.getMessage().getText());
             try {
-                var command = CommandsManager.getCommand(commandName)
-                        .getDeclaredConstructor(Update.class).newInstance(update);
+                var command =
+                        CommandsManager.getCommand(commandName).getDeclaredConstructor(Update.class).newInstance(update);
                 var message = command.execute();
                 execute(message); // Call method to send the message
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException
