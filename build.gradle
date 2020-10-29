@@ -11,5 +11,16 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    //telegram lib
     compile group: 'org.telegram', name: 'telegrambots', version: '4.9.1'
+    // https://mvnrepository.com/artifact/org.reflections/reflections
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+    // https://mvnrepository.com/artifact/com.mashape.unirest/unirest-java
+    compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
+    // https://github.com/google/gson
+    implementation 'com.google.code.gson:gson:2.8.6'
+    //Yahoo
+    compile group: 'com.yahoofinance-api', name: 'YahooFinanceAPI', version: '3.15.0'
+
+    compile "org.slf4j:slf4j-simple:1.7.9"
 }

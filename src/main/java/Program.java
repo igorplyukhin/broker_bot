@@ -1,21 +1,20 @@
+import BrokerBot.BrokerBot;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import commands.CommandsManager;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import repository.Repository;
-import repository.TestRepositoryImpl;
 
-public class BrokerBot {
+import java.io.IOException;
 
-    public static Repository repository = new TestRepositoryImpl();
-
-    public static void main(String[] args) {
-
+public class Program{
+    public static void main(String[] args) throws UnirestException, IOException {
+        CommandsManager.buildCommands();
         ApiContextInitializer.init();
-
         TelegramBotsApi botsApi = new TelegramBotsApi();
 
         try {
-            botsApi.registerBot(new MyAmazingBot());
+            botsApi.registerBot(new BrokerBot());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
