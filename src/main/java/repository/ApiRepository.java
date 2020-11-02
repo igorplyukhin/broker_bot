@@ -1,6 +1,7 @@
 package repository;
 
 import entities.User;
+import enums.Active;
 import enums.State;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -12,26 +13,16 @@ import java.util.HashMap;
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
     private static final HashMap<Long, State> states = new HashMap<>();
-    private static final String[] stocks = new String[]{"AMD", "IBM", "AAPl",
-            "INTC", "BABA", "TSLA", "AIR.PA"};
+    private static final String[] stocks = Active.getNames();
 
     @Override
-    public Stock getQuote(String quoteName) {
-        try {
-            return YahooFinance.get(quoteName);
-        }catch (IOException e){
-            return null;
-        }
+    public Stock getQuote(String quoteName) throws IOException {
+      return YahooFinance.get(quoteName);
     }
 
     @Override
-    public Collection<Stock> getQuotes(){
-        try{
-           return YahooFinance.get(stocks).values();
-        } catch (IOException e)
-        {
-            return null;
-        }
+    public Collection<Stock> getQuotes() throws IOException {
+       return YahooFinance.get(stocks).values();
     }
 
     @Override

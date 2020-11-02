@@ -1,6 +1,5 @@
-package BrokerBot;
+package brokerBot;
 
-import commands.Command;
 import commands.CommandsManager;
 import enums.State;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;

@@ -1,6 +1,6 @@
 package commands.impl;
 
-import BrokerBot.BrokerBot;
+import brokerBot.BrokerBot;
 import commands.Command;
 import commands.CommandAnnotation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
