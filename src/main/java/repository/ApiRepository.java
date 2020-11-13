@@ -1,49 +1,36 @@
 package repository;
 
 import entities.User;
-import enums.Actives;
-import enums.States;
+import enums.Active;
+import enums.State;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
-    private static final HashMap<Long, States> states = new HashMap<>();
-    private static final String[] stocks = new String[]{"AMD", "IBM", "AAPl",
-            "INTC", "BABA", "TSLA", "AIR.PA"};
+    private static final HashMap<Long, State> states = new HashMap<>();
+    private static final String[] stocks = Active.getNames();
 
     @Override
-    public Stock getQuote(String quoteName) {
-        try {
-            return YahooFinance.get(quoteName);
-        }catch (IOException e){
-            return null;
-        }
+    public Stock getQuote(String quoteName) throws IOException {
+      return YahooFinance.get(quoteName);
     }
 
     @Override
-    public Collection<Stock> getQuotes(){
-        try{
-           return YahooFinance.get(stocks).values();
-        } catch (IOException e)
-        {
-            return null;
-        }
+    public Collection<Stock> getQuotes() throws IOException {
+       return YahooFinance.get(stocks).values();
     }
 
     @Override
     public User createUser(long userID) {
         if (users.containsKey(userID))
             return null;
-
         users.put(userID, new User(userID));
-        states.put(userID, States.START);
+        states.put(userID, State.DEFAULT);
         return users.get(userID);
     }
 
@@ -53,16 +40,12 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public void setUserState(long ID, States state) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
+    public void setUserState(long ID, State state) {
         states.put(ID, state);
     }
 
     @Override
-    public States getUserState(long ID) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
+    public State getUserState(long ID) {
         return states.get(ID);
     }
 }

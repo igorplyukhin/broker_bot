@@ -1,20 +1,18 @@
 package repository;
 
 import entities.User;
-import enums.Actives;
-import enums.States;
+import enums.State;
 import yahoofinance.Stock;
 
+import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public interface Repository {
-    Stock getQuote(String quoteName);
-    Collection<Stock> getQuotes();
+    Stock getQuote(String quoteName) throws IOException;
+    Collection<Stock> getQuotes() throws IOException;
     User createUser(long ID);
     User getUser(long ID);
-    void setUserState(long ID, States state);
-    States getUserState(long ID);
+    void setUserState(long ID, State state);
+    State getUserState(long ID);
 }
 
