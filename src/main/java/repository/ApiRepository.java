@@ -37,7 +37,10 @@ public class ApiRepository implements Repository {
 
     @Override
     public User getUser(long userID) {
-        return users.get(userID);
+        var user = users.get(userID);
+        if (user == null)
+            user = createUser(userID);
+        return user;
     }
 
     @Override
@@ -57,10 +60,10 @@ public class ApiRepository implements Repository {
         var price = transaction.getPrice();
         switch (transaction.getType()) {
             case BUY -> {
-                return users.get(transaction.getUserID()).buyStock(stock, count, price);
+                return getUser(transaction.getUserID()).buyStock(stock, count, price);
             }
             case SELL -> {
-                return users.get(transaction.getUserID()).sellStock(stock, count, price);
+                return getUser(transaction.getUserID()).sellStock(stock, count, price);
             }
             default -> {
                 return false;

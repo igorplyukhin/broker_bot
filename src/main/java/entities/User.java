@@ -9,7 +9,7 @@ public class User {
     private double rubBalance;
     private double eurBalance;
     private double usdBalance;
-    private HashMap<Active, Integer> portfolio = new HashMap<>();
+    private final HashMap<Active, Integer> portfolio = new HashMap<>();
 
     public User(long id, double rubBalance, double eurBalance, double usdBalance) {
         this.id = id;
@@ -22,7 +22,7 @@ public class User {
         this.id = id;
         this.rubBalance = 0;
         this.eurBalance = 0;
-        this.usdBalance = 100000;
+        this.usdBalance = 1000;
     }
 
     public long getId() {
@@ -51,6 +51,10 @@ public class User {
 
     public void setUsdBalance(double usdBalance) {
         this.usdBalance = usdBalance;
+    }
+
+    public HashMap<Active, Integer> getPortfolio() {
+        return portfolio;
     }
 
     public java.lang.String toStringBalance() {
