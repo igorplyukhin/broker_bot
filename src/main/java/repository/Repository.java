@@ -1,6 +1,7 @@
 package repository;
 
 import entities.User;
+import entities.transaction.Transaction;
 import enums.State;
 import yahoofinance.Stock;
 
@@ -14,5 +15,6 @@ public interface Repository {
     User getUser(long ID);
     void setUserState(long ID, State state);
     State getUserState(long ID);
+    boolean proceedTransaction(Transaction transaction);
 }
 

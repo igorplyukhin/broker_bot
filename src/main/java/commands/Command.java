@@ -1,11 +1,11 @@
 package commands;
 
+import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 public abstract class Command {
-    private ReplyKeyboardMarkup keyboardMarkup;
+    public abstract SendMessage execute();
 
     private final long chatID;
 
@@ -17,9 +17,13 @@ public abstract class Command {
         this.chatID = update.getMessage().getChatId();
     }
 
-    public abstract SendMessage execute();
-
-    public SendMessage createNewMessage() {
+    public SendMessage newMessage() {
         return new SendMessage().setChatId(chatID);
+    }
+
+    public SendMessage getStockChoiceKeyboard() {
+        var message = newMessage().setText("Choose quote");
+        var keyboard = new KeyboardFactory().buildStockChoiceKeyboard();
+        return message.setReplyMarkup(keyboard);
     }
 }
