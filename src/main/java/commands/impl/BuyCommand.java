@@ -42,7 +42,7 @@ public class BuyCommand extends Command implements Answer {
         if (result)
             return message.setText("You bought " + count + ' ' + stock + " stock(s) " + "for $" + price);
         else
-            return message.setText("Purchase error");
+            return message.setText("Purchase error. Probably you don't have enough money");
     }
 
     @Override

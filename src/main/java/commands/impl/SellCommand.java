@@ -52,8 +52,10 @@ public class SellCommand extends Command implements Answer {
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), State.WAITING_SELL_COMMAND_ANSWER);
         var user = BrokerBot.Repository.getUser(getChatID());
-        var message = newMessage().setText("Choose quote to sell");
+        var message = newMessage();
+        if (user.getPortfolio().keySet().size() == 0)
+            return message.setText("You portfolio is empty");
         var keyboard = new KeyboardFactory().buildUserStocksKeyboard(user);
-        return message.setReplyMarkup(keyboard);
+        return message.setText("Choose quote to sell").setReplyMarkup(keyboard);
     }
 }
