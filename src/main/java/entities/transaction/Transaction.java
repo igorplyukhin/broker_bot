@@ -1,6 +1,6 @@
 package entities.transaction;
 
-import enums.Active;
+import enums.Stock;
 import enums.TransactionType;
 
 import java.util.Date;
@@ -8,7 +8,7 @@ import java.util.Date;
 public interface Transaction {
     long getUserID();
 
-    Active getStock();
+    Stock getStock();
 
     double getPrice();
 

@@ -1,20 +1,19 @@
 package entities.transaction;
 
-import enums.Active;
+import enums.Stock;
 import enums.TransactionType;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class TransactionImpl implements Transaction{
     private final long userID;
-    private final Active stock;
+    private final Stock stock;
     private final double price;
     private final int count;
     private final Date date;
     private final TransactionType type;
 
-    public TransactionImpl(long userID, Active stock, int count, double price, TransactionType type) {
+    public TransactionImpl(long userID, Stock stock, int count, double price, TransactionType type) {
         this.userID = userID;
         this.stock = stock;
         this.price = price;
@@ -29,7 +28,7 @@ public class TransactionImpl implements Transaction{
     }
 
     @Override
-    public Active getStock() {
+    public Stock getStock() {
         return stock;
     }
 

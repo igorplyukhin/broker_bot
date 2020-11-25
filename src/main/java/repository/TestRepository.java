@@ -2,7 +2,7 @@ package repository;
 
 import entities.User;
 import entities.transaction.Transaction;
-import enums.State;
+import enums.UserState;
 import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 public class TestRepository implements Repository {
 
     private static final HashMap<Long, User> users = new HashMap<>();
-    private static final HashMap<Long, State> states = new HashMap<>();
+    private static final HashMap<Long, UserState> states = new HashMap<>();
     private static final Map<String, Stock> quotes = new HashMap<>() {{
         var q = new StockQuote("AAPL");
         q.setPrice(BigDecimal.valueOf(100));
@@ -41,7 +41,7 @@ public class TestRepository implements Repository {
             return null;
 
         users.put(userID, new User(userID));
-        states.put(userID, State.DEFAULT);
+        states.put(userID, UserState.DEFAULT);
         return users.get(userID);
     }
 
@@ -54,12 +54,12 @@ public class TestRepository implements Repository {
     }
 
     @Override
-    public void setUserState(long ID, State state) {
-        states.put(ID, state);
+    public void setUserState(long ID, UserState userState) {
+        states.put(ID, userState);
     }
 
     @Override
-    public State getUserState(long ID) {
+    public UserState getUserState(long ID) {
         return states.get(ID);
     }
 

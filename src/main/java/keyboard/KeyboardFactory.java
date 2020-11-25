@@ -1,16 +1,16 @@
 package keyboard;
 
 import entities.User;
-import enums.Active;
+import enums.Stock;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class KeyboardFactory {
-    private static final int rowCount = 6;
-
-    public ReplyKeyboardMarkup buildKeyboardFromArr(Object[] arr){
+    public ReplyKeyboardMarkup buildKeyboardFromArr(Object[] arr, int rowCount){
         var keyboardMarkup = new ReplyKeyboardMarkup().setOneTimeKeyboard(true);
         var keyboard = new ArrayList<KeyboardRow>();
         for (var row = 0; row < arr.length; row += rowCount) {
@@ -24,12 +24,17 @@ public class KeyboardFactory {
     }
 
     public ReplyKeyboardMarkup buildAllStocksKeyboard() {
-        var stocks = Active.getNames();
-        return buildKeyboardFromArr(stocks);
+        var stocks = Stock.getNames();
+        return buildKeyboardFromArr(stocks ,6);
     }
 
     public ReplyKeyboardMarkup buildUserStocksKeyboard(User user){
         var portfolio = user.getPortfolio().keySet().toArray();
-        return buildKeyboardFromArr(portfolio);
+        return buildKeyboardFromArr(portfolio, 6);
+    }
+
+    public ReplyKeyboardMarkup buildNumberKeyboard() {
+        var values = Arrays.asList("1", "5", "10", "25", "50", "100");
+        return buildKeyboardFromArr(values.toArray(), 2);
     }
 }

@@ -2,13 +2,10 @@ package db;
 
 import db.exceptions.SQLNoDataFoundException;
 import entities.User;
-import enums.Active;
+import enums.Stock;
 
-import javax.ws.rs.NotFoundException;
 import java.sql.*;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class UsersTableController {
     private final Connection conn = createConnection();
@@ -62,10 +59,10 @@ public class UsersTableController {
         }
     }
 
-    private HashMap<Active, Integer> arr2HashMap(String[] arr) {
-        var portfolio = new HashMap<Active, Integer>();
+    private HashMap<Stock, Integer> arr2HashMap(String[] arr) {
+        var portfolio = new HashMap<Stock, Integer>();
         for (var stock : arr) {
-            var active = Active.valueOf(stock);
+            var active = Stock.valueOf(stock);
             if (portfolio.containsKey(active))
                 portfolio.put(active, portfolio.get(active) + 1);
             else
@@ -74,7 +71,7 @@ public class UsersTableController {
         return portfolio;
     }
 
-    private String hashMap2String(HashMap<Active, Integer> map) {
+    private String hashMap2String(HashMap<Stock, Integer> map) {
         var sb = new StringBuilder().append('{');
         for (var key : map.keySet()) {
             var count = map.get(key);

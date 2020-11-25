@@ -1,18 +1,18 @@
 package entities;
 
-import enums.Active;
-import org.checkerframework.checker.units.qual.A;
+import enums.Stock;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class User {
+    public ArrayList<String> previousReplies = new ArrayList<>(){{add("");}};
     private final long id;
-    private double rubBalance;
-    private double eurBalance;
     private double usdBalance;
-    private final HashMap<Active, Integer> portfolio;
+    private final HashMap<Stock, Integer> portfolio;
 
-    public User(long id, double usdBalance, HashMap<Active, Integer> portfolio) {
+    public User(long id, double usdBalance, HashMap<Stock, Integer> portfolio) {
         this.id = id;
         this.usdBalance = usdBalance;
         this.portfolio = portfolio;
@@ -28,22 +28,6 @@ public class User {
         return id;
     }
 
-    public double getRubBalance() {
-        return rubBalance;
-    }
-
-    public void setRubBalance(double rubBalance) {
-        this.rubBalance = rubBalance;
-    }
-
-    public double getEurBalance() {
-        return eurBalance;
-    }
-
-    public void setEurBalance(double eurBalance) {
-        this.eurBalance = eurBalance;
-    }
-
     public double getUsdBalance() {
         return usdBalance;
     }
@@ -52,15 +36,15 @@ public class User {
         this.usdBalance = usdBalance;
     }
 
-    public HashMap<Active, Integer> getPortfolio() {
+    public HashMap<Stock, Integer> getPortfolio() {
         return portfolio;
     }
 
     public java.lang.String toStringBalance() {
-        return String.format("Your balance is %.2f $", usdBalance);
+        return String.format("Your balance is %.2f$", usdBalance);
     }
 
-    public boolean buyStock(Active stock, int count, double price) {
+    public boolean buyStock(Stock stock, int count, double price) {
         if (usdBalance - count * price < 0)
             return false;
 
@@ -74,7 +58,7 @@ public class User {
         return true;
     }
 
-    public boolean sellStock(Active stock, int count, double price) {
+    public boolean sellStock(Stock stock, int count, double price) {
         if (!portfolio.containsKey(stock) || portfolio.get(stock) < count)
             return false;
 

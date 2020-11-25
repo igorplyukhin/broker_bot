@@ -1,11 +1,11 @@
 package commands.impl;
 
 import brokerBot.BrokerBot;
-import answer.Answer;
-import answer.AnswerAnnotation;
-import commands.Command;
-import commands.CommandAnnotation;
-import enums.State;
+import commands.replyCommand.ReplyCommand;
+import commands.replyCommand.ReplyCommandAnnotation;
+import commands.command.Command;
+import commands.command.CommandAnnotation;
+import enums.UserState;
 import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,16 +14,16 @@ import yahoofinance.Stock;
 
 import java.io.IOException;
 
-@AnswerAnnotation(name = State.WAITING_QUOTE_COMMAND_ANSWER, description = "Send quote price to user")
+@ReplyCommandAnnotation(name = UserState.WAITING_QUOTE_COMMAND, description = "Send quote price to user")
 @CommandAnnotation(name = "/get_quote", description = "Show user's balance")
-public class QuoteCommand extends Command implements Answer {
+public class QuoteCommand extends Command implements ReplyCommand {
     public QuoteCommand(Update update) {
         super(update);
     }
 
     @Override
-    public SendMessage handleAnswer(String response) {
-        BrokerBot.Repository.setUserState(getChatID(), State.DEFAULT);
+    public SendMessage handleReply(UserState userState, String response) {
+        BrokerBot.Repository.setUserState(getChatID(), UserState.DEFAULT);
         String text;
         try {
             text = stockToString(BrokerBot.Repository.getQuote(response));
@@ -35,7 +35,7 @@ public class QuoteCommand extends Command implements Answer {
 
     @Override
     public SendMessage execute() {
-        BrokerBot.Repository.setUserState(getChatID(), State.WAITING_QUOTE_COMMAND_ANSWER);
+        BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_QUOTE_COMMAND);
         var message = newMessage().setText("Choose quote");
         var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
         return message.setReplyMarkup(keyboard);

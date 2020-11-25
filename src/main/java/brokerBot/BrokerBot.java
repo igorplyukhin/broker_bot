@@ -1,8 +1,8 @@
 package brokerBot;
 
-import commands.CommandsManager;
+import commands.command.CommandsManager;
 import db.UsersTableController;
-import enums.State;
+import enums.UserState;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -34,9 +34,9 @@ public class BrokerBot extends TelegramLongPollingBot {
             InvocationTargetException, NoSuchMethodException {
         var userState = Repository.getUserState(update.getMessage().getChatId());
         var userMessage = update.getMessage().getText();
-        if (userState != null && userState != State.DEFAULT) {
-            return CommandsManager.getAnswer(userState).getDeclaredConstructor(Update.class)
-                    .newInstance(update).handleAnswer(userMessage);
+        if (userState != null && userState != UserState.DEFAULT) {
+            return CommandsManager.getReplyCommand(userState).getDeclaredConstructor(Update.class)
+                    .newInstance(update).handleReply(userState, userMessage);
         } else {
             var commandName = getCommandName(userMessage);
             return CommandsManager.getCommand(commandName).getDeclaredConstructor(Update.class)

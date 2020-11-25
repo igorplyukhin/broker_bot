@@ -4,12 +4,10 @@ import db.UsersTableController;
 import db.exceptions.SQLNoDataFoundException;
 import entities.User;
 import entities.transaction.Transaction;
-import enums.Active;
-import enums.State;
-import yahoofinance.Stock;
+import enums.Stock;
+import enums.UserState;
 import yahoofinance.YahooFinance;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -18,8 +16,8 @@ import java.util.HashMap;
 
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
-    private static final HashMap<Long, State> states = new HashMap<>();
-    private static final String[] stocks = Active.getNames();
+    private static final HashMap<Long, UserState> states = new HashMap<>();
+    private static final String[] stocks = Stock.getNames();
     private final UsersTableController usersTableController;
 
     public ApiRepository(UsersTableController controller) {
@@ -27,12 +25,12 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public Stock getQuote(java.lang.String quoteName) throws IOException {
+    public yahoofinance.Stock getQuote(java.lang.String quoteName) throws IOException {
         return YahooFinance.get(quoteName);
     }
 
     @Override
-    public Collection<Stock> getQuotes() throws IOException {
+    public Collection<yahoofinance.Stock> getQuotes() throws IOException {
         return YahooFinance.get(stocks).values();
     }
 
@@ -40,7 +38,7 @@ public class ApiRepository implements Repository {
     public User createUser(long userID) {
         var user = new User(userID);
         users.put(userID, user);
-        states.put(userID, State.DEFAULT);
+        states.put(userID, UserState.DEFAULT);
         System.out.println("new user");
         try {
             usersTableController.addUser(user);
@@ -61,7 +59,6 @@ public class ApiRepository implements Repository {
             var user = usersTableController.getUser(userID);
             System.out.println("from db");
             users.put(userID, user);
-            states.put(userID, State.DEFAULT);
             return user;
         } catch (SQLNoDataFoundException ignored) {
         } catch (SQLException e) {
@@ -72,12 +69,12 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public void setUserState(long ID, State state) {
-        states.put(ID, state);
+    public void setUserState(long ID, UserState userState) {
+        states.put(ID, userState);
     }
 
     @Override
-    public State getUserState(long ID) {
+    public UserState getUserState(long ID) {
         return states.get(ID);
     }
 

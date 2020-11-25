@@ -1,4 +1,4 @@
-package commands;
+package commands.command;
 
 import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

@@ -2,7 +2,7 @@ package repository;
 
 import entities.User;
 import entities.transaction.Transaction;
-import enums.State;
+import enums.UserState;
 import yahoofinance.Stock;
 
 import java.io.IOException;
@@ -13,8 +13,8 @@ public interface Repository {
     Collection<Stock> getQuotes() throws IOException;
     User createUser(long ID);
     User getUser(long ID);
-    void setUserState(long ID, State state);
-    State getUserState(long ID);
+    void setUserState(long ID, UserState userState);
+    UserState getUserState(long ID);
     boolean proceedTransaction(Transaction transaction);
 }
 
