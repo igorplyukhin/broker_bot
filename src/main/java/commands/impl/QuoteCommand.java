@@ -17,6 +17,8 @@ import java.io.IOException;
 @ReplyCommandAnnotation(name = UserState.WAITING_QUOTE_COMMAND, description = "Send quote price to user")
 @CommandAnnotation(name = "/get_quote", description = "Show user's balance")
 public class QuoteCommand extends Command implements ReplyCommand {
+    private final String urlPrefix = "https://finance.yahoo.com/quote/";
+
     public QuoteCommand(Update update) {
         super(update);
     }
@@ -30,7 +32,7 @@ public class QuoteCommand extends Command implements ReplyCommand {
         } catch (IOException e) {
             text = "API is unreachable now";
         }
-        return newMessage().setText(text).setReplyMarkup(new ReplyKeyboardRemove());
+        return newMessage().setText(text).setReplyMarkup(new ReplyKeyboardRemove()).disableWebPagePreview();
     }
 
     @Override
@@ -42,12 +44,7 @@ public class QuoteCommand extends Command implements ReplyCommand {
     }
 
     private String stockToString(Stock stock) {
-        var sb = new StringBuilder();
-        sb.append(stock.getName());
-        sb.append(" (");
-        sb.append(stock.getCurrency());
-        sb.append(")\r\n");
-        sb.append(stock.getQuote());
-        return sb.toString();
+        return String.format("%s (%s)\r\n%s\r\n%s", stock.getName(), stock.getCurrency(), stock.getQuote(),
+                urlPrefix + stock.getSymbol());
     }
 }
