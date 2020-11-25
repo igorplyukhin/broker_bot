@@ -15,7 +15,7 @@ public class StartCommand extends Command {
 
     @Override
     public SendMessage execute() {
-        var message = createNewMessage();
+        var message = newMessage();
         var result = BrokerBot.Repository.createUser(getChatID());
         if (result == null)
             return message.setText("User already exists");

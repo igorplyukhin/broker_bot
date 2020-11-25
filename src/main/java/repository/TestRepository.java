@@ -1,6 +1,7 @@
 package repository;
 
 import entities.User;
+import entities.transaction.Transaction;
 import enums.State;
 import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
@@ -60,5 +61,10 @@ public class TestRepository implements Repository {
         if (states.get(ID) == null)
             throw new IllegalArgumentException("User does not exist");
         return states.get(ID);
+    }
+
+    @Override
+    public boolean proceedTransaction(Transaction transaction) {
+        return false;
     }
 }

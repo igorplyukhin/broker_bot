@@ -18,7 +18,7 @@ public class MarketCommand extends Command {
 
     @Override
     public SendMessage execute() {
-        var message = createNewMessage();
+        var message = newMessage();
         String text;
         try {
             text = quotesToString(BrokerBot.Repository.getQuotes());
