@@ -1,6 +1,8 @@
 package repository;
 
-import db.UsersTableController;
+import db.DBController;
+import db.tables.TransactionsTable;
+import db.tables.UsersTable;
 import db.exceptions.SQLNoDataFoundException;
 import entities.User;
 import entities.transaction.Transaction;
@@ -10,7 +12,6 @@ import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -18,10 +19,9 @@ public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
     private static final HashMap<Long, UserState> states = new HashMap<>();
     private static final String[] stocks = Stock.getNames();
-    private final UsersTableController usersTableController;
-
-    public ApiRepository(UsersTableController controller) {
-        usersTableController = controller;
+    private final DBController dbController;
+    public ApiRepository(DBController dbController) {
+        this.dbController = dbController;
     }
 
     @Override
@@ -39,9 +39,8 @@ public class ApiRepository implements Repository {
         var user = new User(userID);
         users.put(userID, user);
         states.put(userID, UserState.DEFAULT);
-        System.out.println("new user");
         try {
-            usersTableController.addUser(user);
+            dbController.usersTable.addUser(user);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,14 +49,11 @@ public class ApiRepository implements Repository {
 
     @Override
     public User getUser(long userID) {
-        if (users.containsKey(userID)) {
-            System.out.println("from list");
+        if (users.containsKey(userID))
             return users.get(userID);
-        }
 
         try {
-            var user = usersTableController.getUser(userID);
-            System.out.println("from db");
+            var user = dbController.usersTable.getUser(userID);
             users.put(userID, user);
             return user;
         } catch (SQLNoDataFoundException ignored) {
@@ -80,9 +76,6 @@ public class ApiRepository implements Repository {
 
     @Override
     public boolean proceedTransaction(Transaction transaction) {
-        var f = new SimpleDateFormat(
-                "yyyy-MM-dd kk:mm:ss");
-        System.out.println(f.format(transaction.getDate()));
         var stock = transaction.getStock();
         var count = transaction.getCount();
         var price = transaction.getPrice();
@@ -90,14 +83,18 @@ public class ApiRepository implements Repository {
         switch (transaction.getType()) {
             case BUY -> {
                 var res = user.buyStock(stock, count, price);
-                if (res)
+                if (res) {
                     saveUserToBD(user);
+                    saveTransactionToBD(transaction);
+                }
                 return res;
             }
             case SELL -> {
                 var res = user.sellStock(stock, count, price);
-                if (res)
+                if (res) {
                     saveUserToBD(user);
+                    saveTransactionToBD(transaction);
+                }
                 return res;
             }
             default -> {
@@ -106,9 +103,27 @@ public class ApiRepository implements Repository {
         }
     }
 
+    @Override
+    public String getTransactionHistory(long userID){
+        try {
+            return dbController.transactionsTable.getTransactions(userID);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return "DB ERROR";
+        }
+    }
+
     private void saveUserToBD(User user) {
         try {
-            usersTableController.updateUser(user);
+            dbController.usersTable.updateUser(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveTransactionToBD(Transaction tr) {
+        try {
+            dbController.transactionsTable.saveTransaction(tr);
         } catch (SQLException e) {
             e.printStackTrace();
         }

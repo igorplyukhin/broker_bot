@@ -83,4 +83,9 @@ public class TestRepository implements Repository {
             }
         }
     }
+
+    @Override
+    public String getTransactionHistory(long userID) {
+        return null;
+    }
 }

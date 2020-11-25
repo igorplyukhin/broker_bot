@@ -16,5 +16,6 @@ public interface Repository {
     void setUserState(long ID, UserState userState);
     UserState getUserState(long ID);
     boolean proceedTransaction(Transaction transaction);
+    String getTransactionHistory(long userID);
 }
 

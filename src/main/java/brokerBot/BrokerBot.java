@@ -1,7 +1,9 @@
 package brokerBot;
 
 import commands.command.CommandsManager;
-import db.UsersTableController;
+import db.DBController;
+import db.tables.TransactionsTable;
+import db.tables.UsersTable;
 import enums.UserState;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 
 
 public class BrokerBot extends TelegramLongPollingBot {
-    public static final Repository Repository = new ApiRepository(new UsersTableController());
+    public static final Repository Repository = new ApiRepository(new DBController());
 
 
     @Override

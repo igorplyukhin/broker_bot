@@ -1,4 +1,4 @@
-package db;
+package db.tables;
 
 import db.exceptions.SQLNoDataFoundException;
 import entities.User;
@@ -7,11 +7,12 @@ import enums.Stock;
 import java.sql.*;
 import java.util.HashMap;
 
-public class UsersTableController {
-    private final Connection conn = createConnection();
+public class UsersTable {
+    private Connection conn = null;
     private static final String tableName = "users";
 
-    public UsersTableController() {
+    public UsersTable(Connection conn) {
+        this.conn = conn;
     }
 
     public User addUser(User user) throws SQLException {
@@ -26,7 +27,6 @@ public class UsersTableController {
         var stmt = conn.createStatement();
         var query = String.format("SELECT * FROM %s WHERE id=%d;", tableName, userId);
         var rs = stmt.executeQuery(query);
-
         stmt.close();
         if (!rs.next())
             throw new SQLNoDataFoundException("NO such user");
@@ -44,19 +44,6 @@ public class UsersTableController {
                 tableName, balance, portfolio, id);
         stmt.executeUpdate(query);
         stmt.close();
-    }
-
-
-    private Connection createConnection() {
-        try {
-            return DriverManager.getConnection(
-                    "jdbc:postgresql://127.0.0.1:5432/broker_bot", "broker",
-                    "VerySavePassword");
-        } catch (SQLException e) {
-            System.out.println("Connection to DB Failed!!!");
-            e.printStackTrace(System.out);
-            return null;
-        }
     }
 
     private HashMap<Stock, Integer> arr2HashMap(String[] arr) {
