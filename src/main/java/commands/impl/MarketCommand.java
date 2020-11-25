@@ -32,11 +32,14 @@ public class MarketCommand extends Command {
     private String quotesToString(Collection<Stock> quotes) {
         var sb = new StringBuilder();
         for (var q : quotes) {
-            sb.append(q.toString());
+            sb.append(q.getSymbol());
+            sb.append(": ");
+            sb.append(q.getQuote().getPrice());
+            sb.append("$ (");
+            sb.append(q.getName());
+            sb.append(")");
             sb.append("\r\n");
         }
         return sb.toString();
     }
-
-
 }

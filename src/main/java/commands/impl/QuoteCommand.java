@@ -6,6 +6,7 @@ import answer.AnswerAnnotation;
 import commands.Command;
 import commands.CommandAnnotation;
 import enums.State;
+import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
@@ -35,7 +36,9 @@ public class QuoteCommand extends Command implements Answer {
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), State.WAITING_QUOTE_COMMAND_ANSWER);
-        return getStockChoiceKeyboard();
+        var message = newMessage().setText("Choose quote");
+        var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
+        return message.setReplyMarkup(keyboard);
     }
 
     private String stockToString(Stock stock) {

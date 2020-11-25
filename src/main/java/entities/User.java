@@ -1,6 +1,7 @@
 package entities;
 
 import enums.Active;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.HashMap;
 
@@ -9,20 +10,18 @@ public class User {
     private double rubBalance;
     private double eurBalance;
     private double usdBalance;
-    private HashMap<Active, Integer> portfolio = new HashMap<>();
+    private final HashMap<Active, Integer> portfolio;
 
-    public User(long id, double rubBalance, double eurBalance, double usdBalance) {
+    public User(long id, double usdBalance, HashMap<Active, Integer> portfolio) {
         this.id = id;
-        this.rubBalance = rubBalance;
-        this.eurBalance = eurBalance;
         this.usdBalance = usdBalance;
+        this.portfolio = portfolio;
     }
 
     public User(long id) {
         this.id = id;
-        this.rubBalance = 0;
-        this.eurBalance = 0;
-        this.usdBalance = 100000;
+        this.usdBalance = 1000;
+        this.portfolio = new HashMap<>();
     }
 
     public long getId() {
@@ -53,8 +52,12 @@ public class User {
         this.usdBalance = usdBalance;
     }
 
+    public HashMap<Active, Integer> getPortfolio() {
+        return portfolio;
+    }
+
     public java.lang.String toStringBalance() {
-        return java.lang.String.format("RUB: %s\nUSD: %s\nEUR: %s", rubBalance, usdBalance, eurBalance);
+        return String.format("Your balance is %.2f $", usdBalance);
     }
 
     public boolean buyStock(Active stock, int count, double price) {
@@ -67,6 +70,7 @@ public class User {
         } else {
             portfolio.put(stock, count);
         }
+
         return true;
     }
 

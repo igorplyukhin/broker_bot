@@ -9,6 +9,7 @@ import entities.transaction.TransactionImpl;
 import enums.Active;
 import enums.State;
 import enums.TransactionType;
+import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
@@ -41,12 +42,14 @@ public class BuyCommand extends Command implements Answer {
         if (result)
             return message.setText("You bought " + count + ' ' + stock + " stock(s) " + "for $" + price);
         else
-            return message.setText("Purchase error");
+            return message.setText("Purchase error. Probably you don't have enough money");
     }
 
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), State.WAITING_BUY_COMMAND_ANSWER);
-        return getStockChoiceKeyboard();
+        var message = newMessage().setText("Choose quote to buy");
+        var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
+        return message.setReplyMarkup(keyboard);
     }
 }

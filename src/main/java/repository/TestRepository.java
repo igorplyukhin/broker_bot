@@ -7,6 +7,7 @@ import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,25 +47,40 @@ public class TestRepository implements Repository {
 
     @Override
     public User getUser(long userID) {
-        return users.get(userID);
+        var user = users.get(userID);
+        if (user == null)
+            user = createUser(userID);
+        return user;
     }
 
     @Override
     public void setUserState(long ID, State state) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
         states.put(ID, state);
     }
 
     @Override
     public State getUserState(long ID) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
         return states.get(ID);
     }
 
     @Override
     public boolean proceedTransaction(Transaction transaction) {
-        return false;
+        var f = new SimpleDateFormat(
+                "yyyy-MM-dd kk:mm:ss");
+        System.out.println(f.format(transaction.getDate()));
+        var stock = transaction.getStock();
+        var count = transaction.getCount();
+        var price = transaction.getPrice();
+        switch (transaction.getType()) {
+            case BUY -> {
+                return getUser(transaction.getUserID()).buyStock(stock, count, price);
+            }
+            case SELL -> {
+                return getUser(transaction.getUserID()).sellStock(stock, count, price);
+            }
+            default -> {
+                return false;
+            }
+        }
     }
 }
