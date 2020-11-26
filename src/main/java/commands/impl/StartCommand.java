@@ -16,7 +16,7 @@ public class StartCommand extends Command {
     public SendMessage execute() {
         return newMessage().setText("\uD83D\uDCC8Hello, I'm Broker Bot\uD83D\uDCC8\n" +
                 "1000$ is your start-up capital\n" +
-                "You can start from \\market command to see stock prices\n" +
+                "You can start from /market command to see stock prices\n" +
                 "Buy some, wait a bit and try to sell at the highest price\n" +
                 "Find out if you are good trader :)");
 

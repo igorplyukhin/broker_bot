@@ -38,7 +38,6 @@ public class ApiRepository implements Repository {
     public User createUser(long userID) {
         var user = new User(userID);
         users.put(userID, user);
-        states.put(userID, UserState.DEFAULT);
         try {
             dbController.usersTable.addUser(user);
         } catch (SQLException e) {

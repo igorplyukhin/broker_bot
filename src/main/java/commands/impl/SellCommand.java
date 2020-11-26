@@ -74,7 +74,7 @@ public class SellCommand extends Command implements ReplyCommand {
             return message.setText(String.format("You sold %d %s stock(s) for %.2f \nNow you have %.2f$",
                     count, strStock, price * count, user.getUsdBalance()));
         else
-            return message.setText("purchase error");
+            return message.setText("You don't have this amount of stocks");
 
     }
 }
