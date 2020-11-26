@@ -19,7 +19,7 @@ public class TransactionsTable {
         var stmt = conn.createStatement();
         var total_price = tr.getPrice() * tr.getCount();
         var query = String.format("INSERT INTO %s(date, user_id, stock, price, count, type)" +
-                        " VALUES(NOW(), %d, '%s', %f, %d, '%s');", table_name,
+                        " VALUES(NOW(), %d, '%s', %.2f, %d, '%s');", table_name,
                 tr.getUserID(), tr.getStock().toString(), total_price, tr.getCount(), tr.getType());
         stmt.executeUpdate(query);
         stmt.close();
