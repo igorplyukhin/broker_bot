@@ -18,8 +18,10 @@ public class TransactionsTable {
     public void saveTransaction(Transaction tr) throws SQLException {
         var stmt = conn.createStatement();
         var total_price = tr.getPrice() * tr.getCount();
+        System.out.println(tr.getPrice());
+        System.out.println(tr.getCount());
         var query = String.format("INSERT INTO %s(date, user_id, stock, price, count, type)" +
-                        " VALUES(NOW(), %d, '%s', %.2f, %d, '%s');", table_name,
+                        " VALUES(NOW(), %d, '%s', %f, %d, '%s');", table_name,
                 tr.getUserID(), tr.getStock().toString(), total_price, tr.getCount(), tr.getType());
         stmt.executeUpdate(query);
         stmt.close();
@@ -32,8 +34,8 @@ public class TransactionsTable {
                         "ORDER BY id DESC LIMIT 50) as FOO ORDER BY id ASC;", table_name, userID);
         var rs = stmt.executeQuery(query);
         while (rs.next()) {
-            var s = String.format("%s %s %s (%s) for %s$\r\n", rs.getDate("date"), rs.getString("type"),
-                    rs.getString("count"), rs.getString("stock"), rs.getString("price"));
+            var s = String.format("%s %s %s (%s) for %.2f$\r\n", rs.getDate("date"), rs.getString("type"),
+                    rs.getString("count"), rs.getString("stock"), rs.getDouble("price"));
             sb.append(s);
         }
         return sb.toString();

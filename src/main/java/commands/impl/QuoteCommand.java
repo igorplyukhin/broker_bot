@@ -15,9 +15,9 @@ import yahoofinance.Stock;
 import java.io.IOException;
 
 @ReplyCommandAnnotation(name = UserState.WAITING_QUOTE_COMMAND, description = "Send quote price to user")
-@CommandAnnotation(name = "/get_quote", description = "Show user's balance")
+@CommandAnnotation(name = "\uD83D\uDCC8 Инфо об акции", description = "Show user's balance")
 public class QuoteCommand extends Command implements ReplyCommand {
-    private final String urlPrefix = "https://finance.yahoo.com/quote/";
+    private static final String urlPrefix = "https://finance.yahoo.com/quote/";
 
     public QuoteCommand(Update update) {
         super(update);
@@ -32,14 +32,14 @@ public class QuoteCommand extends Command implements ReplyCommand {
         } catch (IOException e) {
             text = "API is unreachable now";
         }
-        return newMessage().setText(text).setReplyMarkup(new ReplyKeyboardRemove()).disableWebPagePreview();
+        return newMessage().setText(text).disableWebPagePreview();
     }
 
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_QUOTE_COMMAND);
         var message = newMessage().setText("Choose quote");
-        var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
+        var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard();
         return message.setReplyMarkup(keyboard);
     }
 

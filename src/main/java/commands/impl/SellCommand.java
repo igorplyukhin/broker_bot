@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @ReplyCommandAnnotation(name = UserState.WAITING_SELL_CHOOSE_COUNT, description = "bla")
 @ReplyCommandAnnotation(name = UserState.WAITING_SELL_COMMAND, description = "blabla")
-@CommandAnnotation(name = "/sell", description = "sell command")
+@CommandAnnotation(name = "\uD83D\uDCE4  Продать активы", description = "sell command")
 public class SellCommand extends Command implements ReplyCommand {
     public SellCommand(Update update) {
         super(update);
@@ -41,7 +41,7 @@ public class SellCommand extends Command implements ReplyCommand {
         var message = newMessage();
         if (user.getPortfolio().keySet().size() == 0)
             return message.setText("You portfolio is empty");
-        var keyboard = new KeyboardFactory().buildUserStocksKeyboard(user);
+        var keyboard = BrokerBot.keyboardFac.buildUserStocksKeyboard(user);
         return message.setText("Choose quote to sell").setReplyMarkup(keyboard);
     }
 
@@ -49,7 +49,7 @@ public class SellCommand extends Command implements ReplyCommand {
         var repository = BrokerBot.Repository;
         repository.setUserState(getChatID(), UserState.WAITING_SELL_COMMAND);
         repository.getUser(getChatID()).previousReplies.set(0, response);
-        var keyboard = new KeyboardFactory().buildNumberKeyboard();
+        var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
         return newMessage().setText("Choose number of stocks to sell").setReplyMarkup(keyboard);
     }
 
@@ -57,7 +57,6 @@ public class SellCommand extends Command implements ReplyCommand {
         var repository = BrokerBot.Repository;
         repository.setUserState(getChatID(), UserState.DEFAULT);
         var strStock = repository.getUser(getChatID()).previousReplies.get(0);
-        var message = newMessage().setReplyMarkup(new ReplyKeyboardRemove());
         var user = repository.getUser(getChatID());
         var count = Integer.parseInt(response);
         var stock = Stock.valueOf(strStock);
@@ -66,15 +65,15 @@ public class SellCommand extends Command implements ReplyCommand {
             price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
         } catch (IOException e) {
             e.printStackTrace();
-            return message.setText("API unreachable try later");
+            return newMessage().setText("API unreachable try later");
         }
         var T = new TransactionImpl(getChatID(), stock, count, price, TransactionType.SELL);
         var result = repository.proceedTransaction(T);
         if (result)
-            return message.setText(String.format("You sold %d %s stock(s) for %.2f \nNow you have %.2f$",
+            return newMessage().setText(String.format("You sold %d %s stock(s) for %.2f \nNow you have %.2f$",
                     count, strStock, price * count, user.getUsdBalance()));
         else
-            return message.setText("You don't have this amount of stocks");
+            return newMessage().setText("You don't have this amount of stocks");
 
     }
 }

@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @ReplyCommandAnnotation(name = UserState.WAITING_BUY_PURCHASE, description = "buy stock")
 @ReplyCommandAnnotation(name = UserState.WAITING_BUY_CHOOSE_COUNT, description = "aaa")
-@CommandAnnotation(name = "/buy", description = "buy stock")
+@CommandAnnotation(name = "\uD83D\uDCE5 Купить активы", description = "buy stock")
 public class BuyCommand extends Command implements ReplyCommand {
     public BuyCommand(Update update) {
         super(update);
@@ -38,14 +38,14 @@ public class BuyCommand extends Command implements ReplyCommand {
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_CHOOSE_COUNT);
         var message = newMessage().setText("Choose quote to buy");
-        var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
+        var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard();
         return message.setReplyMarkup(keyboard);
     }
 
     private SendMessage handleSelectCount(String response) {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_PURCHASE);
         BrokerBot.Repository.getUser(getChatID()).previousReplies.set(0, response);
-        var keyboard = new KeyboardFactory().buildNumberKeyboard();
+        var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
         return newMessage().setText("Choose number of stocks to buy").setReplyMarkup(keyboard);
     }
 
@@ -54,7 +54,6 @@ public class BuyCommand extends Command implements ReplyCommand {
         repository.setUserState(getChatID(), UserState.DEFAULT);
         var user = repository.getUser(getChatID());
         var strStock = user.previousReplies.get(0);
-        var message = newMessage().setReplyMarkup(new ReplyKeyboardRemove());
         var stock = Stock.valueOf(strStock);
         var count = Integer.parseInt(response);
         double price;
@@ -62,15 +61,15 @@ public class BuyCommand extends Command implements ReplyCommand {
             price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
         } catch (IOException e) {
             e.printStackTrace();
-            return message.setText("Market is unreachable now");
+            return newMessage().setText("Market is unreachable now");
         }
         var t = new TransactionImpl(getChatID(), stock, count, price, TransactionType.BUY);
         var result = repository.proceedTransaction(t);
 
         if (result)
-            return message.setText(String.format("You bought %d %s stock(s) for %.2f \nNow you have %.2f$",
+            return newMessage().setText(String.format("You bought %d %s stock(s) for %.2f \nNow you have %.2f$",
                     count, strStock, price * count, user.getUsdBalance()));
         else
-            return message.setText("You don't have enough money");
+            return newMessage().setText("You don't have enough money");
     }
 }

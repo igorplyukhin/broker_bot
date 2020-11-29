@@ -20,7 +20,7 @@ public class User {
 
     public User(long id) {
         this.id = id;
-        this.usdBalance = 1000;
+        this.usdBalance = 5000;
         this.portfolio = new HashMap<>();
     }
 

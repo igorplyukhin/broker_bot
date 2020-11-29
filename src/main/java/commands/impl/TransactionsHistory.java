@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 
-@CommandAnnotation(name="/transaction")
+@CommandAnnotation(name="\uD83D\uDDC4 Транзакции")
 public class TransactionsHistory extends Command {
     public TransactionsHistory(Update update) {
         super(update);

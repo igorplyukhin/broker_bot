@@ -10,8 +10,31 @@ import java.util.Arrays;
 import java.util.List;
 
 public class KeyboardFactory {
-    public ReplyKeyboardMarkup buildKeyboardFromArr(Object[] arr, int rowCount){
-        var keyboardMarkup = new ReplyKeyboardMarkup().setOneTimeKeyboard(true);
+    private final static String[] numbers = {"1", "2", "5", "10", "25", "50"};
+    private final static String[] mainMenuButtons = {"\uD83D\uDCB0 Баланс", "\uD83D\uDCE5 Купить активы",
+            "\uD83D\uDCBC Портфолио", "\uD83D\uDCE4  Продать активы", "\uD83D\uDCC8 Маркет", "\uD83D\uDCC8 Инфо об акции",
+            "\uD83D\uDC68\u200D\uD83D\uDCBB Помощь", "\uD83D\uDDC4 Транзакции"};
+
+    public ReplyKeyboardMarkup buildAllStocksKeyboard() {
+        var stocks = Stock.getNames();
+        return buildKeyboardFromArr(stocks, 6);
+    }
+
+    public ReplyKeyboardMarkup buildUserStocksKeyboard(User user) {
+        var portfolio = user.getPortfolio().keySet().toArray();
+        return buildKeyboardFromArr(portfolio, 6);
+    }
+
+    public ReplyKeyboardMarkup buildNumberKeyboard() {
+        return buildKeyboardFromArr(numbers, 2);
+    }
+
+    public ReplyKeyboardMarkup buildMainMenu() {
+        return buildKeyboardFromArr(mainMenuButtons, 2).setOneTimeKeyboard(false);
+    }
+
+    private ReplyKeyboardMarkup buildKeyboardFromArr(Object[] arr, int rowCount) {
+        var keyboardMarkup = new ReplyKeyboardMarkup();
         var keyboard = new ArrayList<KeyboardRow>();
         for (var row = 0; row < arr.length; row += rowCount) {
             var keyboardRow = new KeyboardRow();
@@ -20,21 +43,6 @@ public class KeyboardFactory {
             }
             keyboard.add(keyboardRow);
         }
-        return keyboardMarkup.setKeyboard(keyboard);
-    }
-
-    public ReplyKeyboardMarkup buildAllStocksKeyboard() {
-        var stocks = Stock.getNames();
-        return buildKeyboardFromArr(stocks ,6);
-    }
-
-    public ReplyKeyboardMarkup buildUserStocksKeyboard(User user){
-        var portfolio = user.getPortfolio().keySet().toArray();
-        return buildKeyboardFromArr(portfolio, 6);
-    }
-
-    public ReplyKeyboardMarkup buildNumberKeyboard() {
-        var values = Arrays.asList("1", "5", "10", "25", "50", "100");
-        return buildKeyboardFromArr(values.toArray(), 2);
+        return keyboardMarkup.setKeyboard(keyboard).setResizeKeyboard(true);
     }
 }

@@ -6,7 +6,7 @@ import commands.command.CommandAnnotation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@CommandAnnotation(name="/portfolio", description = "blabla")
+@CommandAnnotation(name="\uD83D\uDCBC Портфолио", description = "blabla")
 public class PortfolioCommand extends Command {
     public PortfolioCommand(Update update) {
         super(update);

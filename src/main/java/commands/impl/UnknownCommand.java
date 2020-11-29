@@ -14,6 +14,6 @@ public class UnknownCommand extends Command {
 
     @Override
     public SendMessage execute() {
-        return newMessage().setText("Not Implemented");
+        return newMessage().setText("Нет такой команды");
     }
 }

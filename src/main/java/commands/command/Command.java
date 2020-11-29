@@ -1,5 +1,6 @@
 package commands.command;
 
+import brokerBot.BrokerBot;
 import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,6 +19,7 @@ public abstract class Command {
     }
 
     public SendMessage newMessage() {
-        return new SendMessage().setChatId(chatID);
+        var menuKeyboard = BrokerBot.keyboardFac.buildMainMenu();
+        return new SendMessage().setChatId(chatID).setReplyMarkup(menuKeyboard);
     }
 }

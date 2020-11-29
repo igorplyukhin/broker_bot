@@ -6,7 +6,7 @@ import commands.command.CommandAnnotation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@CommandAnnotation(name = "/balance", description = "Show user's balance")
+@CommandAnnotation(name = "\uD83D\uDCB0 Баланс", description = "Show user's balance")
 public class BalanceCommand extends Command {
     public BalanceCommand(Update update) {
         super(update);

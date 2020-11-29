@@ -10,7 +10,7 @@ import yahoofinance.Stock;
 import java.io.IOException;
 import java.util.Collection;
 
-@CommandAnnotation(name = "/market", description = "Show user's balance")
+@CommandAnnotation(name = "\uD83D\uDCC8 Маркет", description = "Show user's balance")
 public class MarketCommand extends Command {
     public MarketCommand(Update update) {
         super(update);
@@ -26,13 +26,13 @@ public class MarketCommand extends Command {
             text = "API service unreachable now";
         }
 
-       return message.setText(text);
+        return message.setText(text).enableMarkdown(true);
     }
 
     private String quotesToString(Collection<Stock> quotes) {
         var sb = new StringBuilder();
         for (var q : quotes) {
-            sb.append(q.getSymbol());
+            sb.append(String.format("*%s*", q.getSymbol()));
             sb.append(": ");
             sb.append(q.getQuote().getPrice());
             sb.append("$ (");
