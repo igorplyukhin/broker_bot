@@ -1,8 +1,8 @@
 package commands.impl;
 
 import brokerBot.BrokerBot;
-import commands.Command;
-import commands.CommandAnnotation;
+import commands.command.Command;
+import commands.command.CommandAnnotation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import yahoofinance.Stock;
@@ -32,11 +32,14 @@ public class MarketCommand extends Command {
     private String quotesToString(Collection<Stock> quotes) {
         var sb = new StringBuilder();
         for (var q : quotes) {
-            sb.append(q.toString());
+            sb.append(q.getSymbol());
+            sb.append(": ");
+            sb.append(q.getQuote().getPrice());
+            sb.append("$ (");
+            sb.append(q.getName());
+            sb.append(")");
             sb.append("\r\n");
         }
         return sb.toString();
     }
-
-
 }

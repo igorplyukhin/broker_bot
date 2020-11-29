@@ -1,0 +1,13 @@
+package enums;
+
+public enum UserState {
+    DEFAULT,
+    A,
+    B,
+    C,
+    WAITING_QUOTE_COMMAND,
+    WAITING_BUY_CHOOSE_COUNT,
+    WAITING_BUY_PURCHASE,
+    WAITING_SELL_COMMAND,
+    WAITING_SELL_CHOOSE_COUNT;
+}

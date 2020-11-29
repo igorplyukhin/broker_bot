@@ -2,11 +2,12 @@ package repository;
 
 import entities.User;
 import entities.transaction.Transaction;
-import enums.State;
+import enums.UserState;
 import yahoofinance.Stock;
 import yahoofinance.quotes.stock.StockQuote;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class TestRepository implements Repository {
 
     private static final HashMap<Long, User> users = new HashMap<>();
-    private static final HashMap<Long, State> states = new HashMap<>();
+    private static final HashMap<Long, UserState> states = new HashMap<>();
     private static final Map<String, Stock> quotes = new HashMap<>() {{
         var q = new StockQuote("AAPL");
         q.setPrice(BigDecimal.valueOf(100));
@@ -40,31 +41,51 @@ public class TestRepository implements Repository {
             return null;
 
         users.put(userID, new User(userID));
-        states.put(userID, State.DEFAULT);
+        states.put(userID, UserState.DEFAULT);
         return users.get(userID);
     }
 
     @Override
     public User getUser(long userID) {
-        return users.get(userID);
+        var user = users.get(userID);
+        if (user == null)
+            user = createUser(userID);
+        return user;
     }
 
     @Override
-    public void setUserState(long ID, State state) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
-        states.put(ID, state);
+    public void setUserState(long ID, UserState userState) {
+        states.put(ID, userState);
     }
 
     @Override
-    public State getUserState(long ID) {
-        if (states.get(ID) == null)
-            throw new IllegalArgumentException("User does not exist");
+    public UserState getUserState(long ID) {
         return states.get(ID);
     }
 
     @Override
     public boolean proceedTransaction(Transaction transaction) {
-        return false;
+        var f = new SimpleDateFormat(
+                "yyyy-MM-dd kk:mm:ss");
+        System.out.println(f.format(transaction.getDate()));
+        var stock = transaction.getStock();
+        var count = transaction.getCount();
+        var price = transaction.getPrice();
+        switch (transaction.getType()) {
+            case BUY -> {
+                return getUser(transaction.getUserID()).buyStock(stock, count, price);
+            }
+            case SELL -> {
+                return getUser(transaction.getUserID()).sellStock(stock, count, price);
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public String getTransactionHistory(long userID) {
+        return null;
     }
 }

@@ -1,7 +1,10 @@
 package brokerBot;
 
-import commands.CommandsManager;
-import enums.State;
+import commands.command.CommandsManager;
+import db.DBController;
+import db.tables.TransactionsTable;
+import db.tables.UsersTable;
+import enums.UserState;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -13,7 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 
 
 public class BrokerBot extends TelegramLongPollingBot {
-    public static final Repository Repository = new ApiRepository();
+    public static final Repository Repository = new ApiRepository(new DBController());
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -32,9 +36,9 @@ public class BrokerBot extends TelegramLongPollingBot {
             InvocationTargetException, NoSuchMethodException {
         var userState = Repository.getUserState(update.getMessage().getChatId());
         var userMessage = update.getMessage().getText();
-        if (userState != null && userState != State.DEFAULT) {
-            return CommandsManager.getAnswer(userState).getDeclaredConstructor(Update.class)
-                    .newInstance(update).handleAnswer(userMessage);
+        if (userState != null && userState != UserState.DEFAULT) {
+            return CommandsManager.getReplyCommand(userState).getDeclaredConstructor(Update.class)
+                    .newInstance(update).handleReply(userState, userMessage);
         } else {
             var commandName = getCommandName(userMessage);
             return CommandsManager.getCommand(commandName).getDeclaredConstructor(Update.class)

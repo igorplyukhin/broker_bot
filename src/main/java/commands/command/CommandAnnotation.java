@@ -1,6 +1,4 @@
-package answer;
-
-import enums.State;
+package commands.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +8,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface AnswerAnnotation {
-    State name();
+public @interface CommandAnnotation {
+    String name();
     String description() default "";
 }
+

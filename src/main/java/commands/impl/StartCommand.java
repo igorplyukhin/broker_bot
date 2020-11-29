@@ -1,8 +1,7 @@
 package commands.impl;
 
-import brokerBot.BrokerBot;
-import commands.Command;
-import commands.CommandAnnotation;
+import commands.command.Command;
+import commands.command.CommandAnnotation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -15,11 +14,11 @@ public class StartCommand extends Command {
 
     @Override
     public SendMessage execute() {
-        var message = newMessage();
-        var result = BrokerBot.Repository.createUser(getChatID());
-        if (result == null)
-            return message.setText("User already exists");
-        else
-            return message.setText("User created");
+        return newMessage().setText("\uD83D\uDCC8Hello, I'm Broker Bot\uD83D\uDCC8\n" +
+                "1000$ is your start-up capital\n" +
+                "You can start from /market command to see stock prices\n" +
+                "Buy some, wait a bit and try to sell at the highest price\n" +
+                "Find out if you are good trader :)");
+
     }
 }

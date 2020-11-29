@@ -1,19 +1,20 @@
 package commands.impl;
 
+import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-
-@CommandAnnotation(name = "/unknown", description = "no such command")
-public class UnknownCommand extends Command {
-    public UnknownCommand(Update update) {
+@CommandAnnotation(name="/portfolio", description = "blabla")
+public class PortfolioCommand extends Command {
+    public PortfolioCommand(Update update) {
         super(update);
     }
 
     @Override
     public SendMessage execute() {
-        return newMessage().setText("Not Implemented");
+        var user = BrokerBot.Repository.getUser(getChatID());
+        return newMessage().setText(user.getPortfolio().toString());
     }
 }

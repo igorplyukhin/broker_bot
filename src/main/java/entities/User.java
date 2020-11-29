@@ -1,48 +1,31 @@
 package entities;
 
-import enums.Active;
+import enums.Stock;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class User {
+    public ArrayList<String> previousReplies = new ArrayList<>(){{add("");}};
     private final long id;
-    private double rubBalance;
-    private double eurBalance;
     private double usdBalance;
-    private HashMap<Active, Integer> portfolio = new HashMap<>();
+    private final HashMap<Stock, Integer> portfolio;
 
-    public User(long id, double rubBalance, double eurBalance, double usdBalance) {
+    public User(long id, double usdBalance, HashMap<Stock, Integer> portfolio) {
         this.id = id;
-        this.rubBalance = rubBalance;
-        this.eurBalance = eurBalance;
         this.usdBalance = usdBalance;
+        this.portfolio = portfolio;
     }
 
     public User(long id) {
         this.id = id;
-        this.rubBalance = 0;
-        this.eurBalance = 0;
-        this.usdBalance = 100000;
+        this.usdBalance = 1000;
+        this.portfolio = new HashMap<>();
     }
 
     public long getId() {
         return id;
-    }
-
-    public double getRubBalance() {
-        return rubBalance;
-    }
-
-    public void setRubBalance(double rubBalance) {
-        this.rubBalance = rubBalance;
-    }
-
-    public double getEurBalance() {
-        return eurBalance;
-    }
-
-    public void setEurBalance(double eurBalance) {
-        this.eurBalance = eurBalance;
     }
 
     public double getUsdBalance() {
@@ -53,11 +36,15 @@ public class User {
         this.usdBalance = usdBalance;
     }
 
-    public java.lang.String toStringBalance() {
-        return java.lang.String.format("RUB: %s\nUSD: %s\nEUR: %s", rubBalance, usdBalance, eurBalance);
+    public HashMap<Stock, Integer> getPortfolio() {
+        return portfolio;
     }
 
-    public boolean buyStock(Active stock, int count, double price) {
+    public java.lang.String toStringBalance() {
+        return String.format("Your balance is %.2f$", usdBalance);
+    }
+
+    public boolean buyStock(Stock stock, int count, double price) {
         if (usdBalance - count * price < 0)
             return false;
 
@@ -67,10 +54,11 @@ public class User {
         } else {
             portfolio.put(stock, count);
         }
+
         return true;
     }
 
-    public boolean sellStock(Active stock, int count, double price) {
+    public boolean sellStock(Stock stock, int count, double price) {
         if (!portfolio.containsKey(stock) || portfolio.get(stock) < count)
             return false;
 

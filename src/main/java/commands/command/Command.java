@@ -1,4 +1,4 @@
-package commands;
+package commands.command;
 
 import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,11 +19,5 @@ public abstract class Command {
 
     public SendMessage newMessage() {
         return new SendMessage().setChatId(chatID);
-    }
-
-    public SendMessage getStockChoiceKeyboard() {
-        var message = newMessage().setText("Choose quote");
-        var keyboard = new KeyboardFactory().buildStockChoiceKeyboard();
-        return message.setReplyMarkup(keyboard);
     }
 }
