@@ -17,9 +17,6 @@ public class BalanceCommand extends Command {
     public SendMessage execute() {
         var message = newMessage();
         var user = BrokerBot.Repository.getUser(getChatID());
-        if (user == null)
-            return message.setText( "User does not exist");
-        else
-            return message.setText(user.toStringBalance());
+        return message.setText(user.toStringBalance());
     }
 }

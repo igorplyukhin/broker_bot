@@ -29,7 +29,7 @@ public class QuoteCommand extends Command implements ReplyCommand {
         try {
             text = stockToString(BrokerBot.Repository.getQuote(response));
         } catch (IOException e) {
-            text = "API is unreachable now";
+            text = "Маркет сейчас недоступен, попробуй позже";
         }
         return newMessage().setText(text).disableWebPagePreview();
     }
@@ -37,7 +37,7 @@ public class QuoteCommand extends Command implements ReplyCommand {
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_QUOTE_COMMAND);
-        var message = newMessage().setText("Choose quote");
+        var message = newMessage().setText("Выбери акцию");
         var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard();
         return message.setReplyMarkup(keyboard);
     }

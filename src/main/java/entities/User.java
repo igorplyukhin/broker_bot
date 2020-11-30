@@ -41,7 +41,7 @@ public class User {
     }
 
     public java.lang.String toStringBalance() {
-        return String.format("Your balance is %.2f$", usdBalance);
+        return String.format("Твой баланс %.2f$", usdBalance);
     }
 
     public boolean buyStock(Stock stock, int count, double price) {

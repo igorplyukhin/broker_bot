@@ -29,14 +29,14 @@ public class BuyCommand extends Command implements ReplyCommand {
         return switch (userState) {
             case WAITING_BUY_CHOOSE_COUNT -> handleSelectCount(response);
             case WAITING_BUY_PURCHASE -> handlePurchase(response);
-            default -> newMessage().setText("default");
+            default -> newMessage().setText("Critical error");
         };
     }
 
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_CHOOSE_COUNT);
-        var message = newMessage().setText("Choose quote to buy");
+        var message = newMessage().setText("Выбери акцию");
         var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard();
         return message.setReplyMarkup(keyboard);
     }
@@ -45,7 +45,7 @@ public class BuyCommand extends Command implements ReplyCommand {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_PURCHASE);
         BrokerBot.Repository.getUser(getChatID()).previousReplies.set(0, response);
         var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
-        return newMessage().setText("Choose number of stocks to buy").setReplyMarkup(keyboard);
+        return newMessage().setText("Выбери количество").setReplyMarkup(keyboard);
     }
 
     private SendMessage handlePurchase(String response) {
@@ -60,15 +60,15 @@ public class BuyCommand extends Command implements ReplyCommand {
             price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
         } catch (IOException e) {
             e.printStackTrace();
-            return newMessage().setText("Market is unreachable now");
+            return newMessage().setText("Маркет сейчас недоступен, попробуй позже");
         }
         var t = new TransactionImpl(getChatID(), stock, count, price, TransactionType.BUY);
         var result = repository.proceedTransaction(t);
 
         if (result)
-            return newMessage().setText(String.format("You bought %d %s stock(s) for %.2f \nNow you have %.2f$",
+            return newMessage().setText(String.format("Ты купил %d (%s) за %.2f \nТвой баланс %.2f$",
                     count, strStock, price * count, user.getUsdBalance()));
         else
-            return newMessage().setText("You don't have enough money");
+            return newMessage().setText("Недостаточно денег(");
     }
 }

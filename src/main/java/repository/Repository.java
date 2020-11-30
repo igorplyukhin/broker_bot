@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 public interface Repository {
+    String ApiErrorMock = null;
     Stock getQuote(String quoteName) throws IOException;
     Collection<Stock> getQuotes() throws IOException;
     User createUser(long ID);

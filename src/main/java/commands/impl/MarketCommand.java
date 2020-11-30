@@ -24,7 +24,7 @@ public class MarketCommand extends Command {
         try {
             text = quotesToString(BrokerBot.Repository.getQuotes());
         } catch (IOException e) {
-            text = "API service unreachable now";
+            text = "Маркет сейчас недоступен, попробуй позже";
         }
 
         return message.setText(text).enableMarkdown(true);

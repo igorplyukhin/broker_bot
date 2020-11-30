@@ -39,9 +39,9 @@ public class SellCommand extends Command implements ReplyCommand {
         var user = BrokerBot.Repository.getUser(getChatID());
         var message = newMessage();
         if (user.getPortfolio().keySet().size() == 0)
-            return message.setText("You portfolio is empty");
+            return message.setText("У тебя пустое портфолио");
         var keyboard = BrokerBot.keyboardFac.buildUserStocksKeyboard(user);
-        return message.setText("Choose quote to sell").setReplyMarkup(keyboard);
+        return message.setText("Выбери акцию").setReplyMarkup(keyboard);
     }
 
     private SendMessage handleSelectCount(String response) {
@@ -49,7 +49,11 @@ public class SellCommand extends Command implements ReplyCommand {
         repository.setUserState(getChatID(), UserState.WAITING_SELL_COMMAND);
         repository.getUser(getChatID()).previousReplies.set(0, response);
         var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
-        return newMessage().setText("Choose number of stocks to sell").setReplyMarkup(keyboard);
+        var user = BrokerBot.Repository.getUser(getChatID());
+        var count = user.getPortfolio().get(Stock.valueOf(response));
+        if (count == null) count = 0;
+        return newMessage().setText(String.format("Таких активов у тебя %d. Сколько хочешь продать?", count))
+                .setReplyMarkup(keyboard);
     }
 
     private SendMessage handleSell(String response) {
@@ -64,15 +68,15 @@ public class SellCommand extends Command implements ReplyCommand {
             price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
         } catch (IOException e) {
             e.printStackTrace();
-            return newMessage().setText("API unreachable try later");
+            return newMessage().setText("Маркет сейчас недоступен, попробуй позже");
         }
         var T = new TransactionImpl(getChatID(), stock, count, price, TransactionType.SELL);
         var result = repository.proceedTransaction(T);
         if (result)
-            return newMessage().setText(String.format("You sold %d %s stock(s) for %.2f \nNow you have %.2f$",
+            return newMessage().setText(String.format("Ты продал %d (%s) за %.2f \nТеперь у тебя %.2f$",
                     count, strStock, price * count, user.getUsdBalance()));
         else
-            return newMessage().setText("You don't have this amount of stocks");
+            return newMessage().setText("У тебя нет столько акций");
 
     }
 }

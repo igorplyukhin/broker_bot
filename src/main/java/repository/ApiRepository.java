@@ -20,6 +20,7 @@ public class ApiRepository implements Repository {
     private static final HashMap<Long, UserState> states = new HashMap<>();
     private static final String[] stocks = Stock.getNames();
     private final DBController dbController;
+
     public ApiRepository(DBController dbController) {
         this.dbController = dbController;
     }
@@ -103,7 +104,7 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public String getTransactionHistory(long userID){
+    public String getTransactionHistory(long userID) {
         try {
             return dbController.transactionsTable.getTransactions(userID);
         } catch (SQLException throwables) {
