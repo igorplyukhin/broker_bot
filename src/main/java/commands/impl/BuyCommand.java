@@ -6,20 +6,19 @@ import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
 import entities.transaction.TransactionImpl;
+import enums.CommandName;
 import enums.Stock;
 import enums.UserState;
 import enums.TransactionType;
-import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 import java.io.IOException;
 
 
 @ReplyCommandAnnotation(name = UserState.WAITING_BUY_PURCHASE, description = "buy stock")
 @ReplyCommandAnnotation(name = UserState.WAITING_BUY_CHOOSE_COUNT, description = "aaa")
-@CommandAnnotation(name = "\uD83D\uDCE5 Купить активы", description = "buy stock")
+@CommandAnnotation(name = CommandName.BUY, description = "buy stock")
 public class BuyCommand extends Command implements ReplyCommand {
     public BuyCommand(Update update) {
         super(update);

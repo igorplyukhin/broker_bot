@@ -3,6 +3,7 @@ package commands.impl;
 import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
+import enums.CommandName;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import yahoofinance.Stock;
@@ -10,7 +11,7 @@ import yahoofinance.Stock;
 import java.io.IOException;
 import java.util.Collection;
 
-@CommandAnnotation(name = "\uD83D\uDCC8 Маркет", description = "Show user's balance")
+@CommandAnnotation(name = CommandName.MARKET, description = "Show user's balance")
 public class MarketCommand extends Command {
     public MarketCommand(Update update) {
         super(update);

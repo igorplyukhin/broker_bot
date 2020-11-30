@@ -5,17 +5,16 @@ import commands.replyCommand.ReplyCommand;
 import commands.replyCommand.ReplyCommandAnnotation;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
+import enums.CommandName;
 import enums.UserState;
-import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import yahoofinance.Stock;
 
 import java.io.IOException;
 
 @ReplyCommandAnnotation(name = UserState.WAITING_QUOTE_COMMAND, description = "Send quote price to user")
-@CommandAnnotation(name = "\uD83D\uDCC8 Инфо об акции", description = "Show user's balance")
+@CommandAnnotation(name = CommandName.GET_QUOTE, description = "Show user's balance")
 public class QuoteCommand extends Command implements ReplyCommand {
     private static final String urlPrefix = "https://finance.yahoo.com/quote/";
 

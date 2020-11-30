@@ -1,19 +1,18 @@
 package keyboard;
 
 import entities.User;
+import enums.CommandName;
 import enums.Stock;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class KeyboardFactory {
     private final static String[] numbers = {"1", "2", "5", "10", "25", "50"};
-    private final static String[] mainMenuButtons = {"\uD83D\uDCB0 Баланс", "\uD83D\uDCE5 Купить активы",
-            "\uD83D\uDCBC Портфолио", "\uD83D\uDCE4  Продать активы", "\uD83D\uDCC8 Маркет", "\uD83D\uDCC8 Инфо об акции",
-            "\uD83D\uDC68\u200D\uD83D\uDCBB Помощь", "\uD83D\uDDC4 Транзакции"};
+    private final static String[] mainMenuButtons = {CommandName.BALANCE.label, CommandName.BUY.label,
+            CommandName.PORTFOLIO.label, CommandName.SELL.label, CommandName.MARKET.label, CommandName.GET_QUOTE.label,
+            CommandName.HELP.label, CommandName.TRANSACTIONS.label};
 
     public ReplyKeyboardMarkup buildAllStocksKeyboard() {
         var stocks = Stock.getNames();
