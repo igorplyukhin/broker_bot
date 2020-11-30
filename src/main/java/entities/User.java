@@ -11,17 +11,20 @@ public class User {
     private final long id;
     private double usdBalance;
     private final HashMap<Stock, Integer> portfolio;
+    private Boolean isVip = false;
 
-    public User(long id, double usdBalance, HashMap<Stock, Integer> portfolio) {
+    public User(long id, double usdBalance, HashMap<Stock, Integer> portfolio, boolean isVip) {
         this.id = id;
         this.usdBalance = usdBalance;
         this.portfolio = portfolio;
+        this.isVip = isVip;
     }
 
     public User(long id) {
         this.id = id;
         this.usdBalance = 5000;
         this.portfolio = new HashMap<>();
+        this.isVip = false;
     }
 
     public long getId() {
@@ -38,6 +41,10 @@ public class User {
 
     public HashMap<Stock, Integer> getPortfolio() {
         return portfolio;
+    }
+
+    public Boolean getVip() {
+        return isVip;
     }
 
     public java.lang.String toStringBalance() {

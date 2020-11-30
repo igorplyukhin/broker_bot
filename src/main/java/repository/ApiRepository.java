@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
     private static final HashMap<Long, UserState> states = new HashMap<>();
-    private static final String[] stocks = Stock.getNames();
+    private static final String[] stocks = Stock.getNames().toArray(String[]::new);
     private final DBController dbController;
 
     public ApiRepository(DBController dbController) {

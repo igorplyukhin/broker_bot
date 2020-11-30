@@ -7,12 +7,17 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class KeyboardFactory {
-    private final static String[] numbers = {"1", "2", "5", "10", "25", "50"};
-    private final static String[] mainMenuButtons = {CommandName.BALANCE.label, CommandName.BUY.label,
+    private final static List<String> chooseQuoteCountNums = Arrays.asList("1", "2", "5", "10", "25", "50");
+    private final static List<String> mainMenuButtons = Arrays.asList(CommandName.BALANCE.label, CommandName.BUY.label,
             CommandName.PORTFOLIO.label, CommandName.SELL.label, CommandName.MARKET.label, CommandName.GET_QUOTE.label,
-            CommandName.HELP.label, CommandName.TRANSACTIONS.label};
+            CommandName.BUYVIP.label, CommandName.TRANSACTIONS.label);
+    private final static List<String> VipMainMenuButtons = Arrays.asList(CommandName.BALANCE.label, CommandName.BUY.label,
+    CommandName.PORTFOLIO.label, CommandName.SELL.label, CommandName.MARKET.label, CommandName.GET_QUOTE.label,
+    CommandName.ADD_QUOTE.label, CommandName.TRANSACTIONS.label);
 
     public ReplyKeyboardMarkup buildAllStocksKeyboard() {
         var stocks = Stock.getNames();
@@ -20,28 +25,32 @@ public class KeyboardFactory {
     }
 
     public ReplyKeyboardMarkup buildUserStocksKeyboard(User user) {
-        var portfolio = user.getPortfolio().keySet().toArray();
+        var portfolio = new ArrayList<Object>(user.getPortfolio().keySet());
         return buildKeyboardFromArr(portfolio, 6);
     }
 
     public ReplyKeyboardMarkup buildNumberKeyboard() {
-        return buildKeyboardFromArr(numbers, 2);
+        return buildKeyboardFromArr(chooseQuoteCountNums, 2);
     }
 
     public ReplyKeyboardMarkup buildMainMenu() {
-        return buildKeyboardFromArr(mainMenuButtons, 2).setOneTimeKeyboard(false);
+        return buildKeyboardFromArr(mainMenuButtons, 2);
     }
 
-    private ReplyKeyboardMarkup buildKeyboardFromArr(Object[] arr, int rowCount) {
+    public ReplyKeyboardMarkup buildVipMainMenu(){
+        return buildKeyboardFromArr(VipMainMenuButtons, 2);
+    }
+
+    private ReplyKeyboardMarkup buildKeyboardFromArr(List<? extends Object> arr, int columnCount) {
         var keyboardMarkup = new ReplyKeyboardMarkup();
         var keyboard = new ArrayList<KeyboardRow>();
-        for (var row = 0; row < arr.length; row += rowCount) {
+        for (var row = 0; row < arr.size(); row += columnCount) {
             var keyboardRow = new KeyboardRow();
-            for (var i = row; i < row + rowCount && i < arr.length; i++) {
-                keyboardRow.add(arr[i].toString());
+            for (var i = row; i < row + columnCount && i < arr.size(); i++) {
+                keyboardRow.add(arr.get(i).toString());
             }
             keyboard.add(keyboardRow);
         }
-        return keyboardMarkup.setKeyboard(keyboard).setResizeKeyboard(true);
+        return keyboardMarkup.setKeyboard(keyboard).setResizeKeyboard(false);
     }
 }

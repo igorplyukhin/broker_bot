@@ -32,7 +32,7 @@ public class UsersTable {
             throw new SQLNoDataFoundException("NO such user");
 
         var arr = (String[]) rs.getArray("portfolio").getArray();
-        return new User(rs.getInt("id"), rs.getDouble("balance"), arr2HashMap(arr));
+        return new User(rs.getInt("id"), rs.getDouble("balance"), arr2HashMap(arr), rs.getBoolean("isVip"));
     }
 
     public void updateUser(User user) throws SQLException {
