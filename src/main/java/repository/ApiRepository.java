@@ -1,12 +1,10 @@
 package repository;
 
 import db.DBController;
-import db.tables.TransactionsTable;
-import db.tables.UsersTable;
 import db.exceptions.SQLNoDataFoundException;
 import entities.User;
 import entities.transaction.Transaction;
-import enums.Stock;
+import enums.BaseStock;
 import enums.UserState;
 import yahoofinance.YahooFinance;
 
@@ -18,8 +16,9 @@ import java.util.HashMap;
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
     private static final HashMap<Long, UserState> states = new HashMap<>();
-    private static final String[] stocks = Stock.getNames().toArray(String[]::new);
+    private static final String[] stocks = BaseStock.getNames().toArray(String[]::new);
     private final DBController dbController;
+
 
     public ApiRepository(DBController dbController) {
         this.dbController = dbController;
@@ -27,7 +26,9 @@ public class ApiRepository implements Repository {
 
     @Override
     public yahoofinance.Stock getQuote(java.lang.String quoteName) throws IOException {
-        return YahooFinance.get(quoteName);
+        var s = YahooFinance.get(quoteName);
+        System.out.println(s.getCurrency());
+        return s;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class ApiRepository implements Repository {
         var user = getUser(transaction.getUserID());
         switch (transaction.getType()) {
             case BUY -> {
-                var res = user.buyStock(stock, count, price);
+                var res = user.buyStock(stock.getQuote().getSymbol(), count, price);
                 if (res) {
                     saveUserToBD(user);
                     saveTransactionToBD(transaction);
@@ -90,7 +91,7 @@ public class ApiRepository implements Repository {
                 return res;
             }
             case SELL -> {
-                var res = user.sellStock(stock, count, price);
+                var res = user.sellStock(stock.getQuote().getSymbol(), count, price);
                 if (res) {
                     saveUserToBD(user);
                     saveTransactionToBD(transaction);
@@ -111,6 +112,12 @@ public class ApiRepository implements Repository {
             throwables.printStackTrace();
             return "DB ERROR";
         }
+    }
+
+    @Override
+    public void addExtraQuoteToUser(User user, String quote) {
+        user.addExtraQuote(quote);
+        saveUserToBD(user);
     }
 
     private void saveUserToBD(User user) {

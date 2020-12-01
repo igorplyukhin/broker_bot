@@ -21,7 +21,7 @@ public abstract class Command {
 
     public SendMessage newMessage() {
         ReplyKeyboardMarkup menuKeyboard;
-        if(BrokerBot.Repository.getUser(chatID).getVip())
+        if(BrokerBot.Repository.getUser(chatID).isVip)
             menuKeyboard = BrokerBot.keyboardFac.buildVipMainMenu();
         else
             menuKeyboard = BrokerBot.keyboardFac.buildMainMenu();

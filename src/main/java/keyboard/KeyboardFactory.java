@@ -2,7 +2,7 @@ package keyboard;
 
 import entities.User;
 import enums.CommandName;
-import enums.Stock;
+import enums.BaseStock;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -19,8 +19,12 @@ public class KeyboardFactory {
     CommandName.PORTFOLIO.label, CommandName.SELL.label, CommandName.MARKET.label, CommandName.GET_QUOTE.label,
     CommandName.ADD_QUOTE.label, CommandName.TRANSACTIONS.label);
 
-    public ReplyKeyboardMarkup buildAllStocksKeyboard() {
-        var stocks = Stock.getNames();
+    public ReplyKeyboardMarkup buildAllStocksKeyboard(User user) {
+        var extraQuotes = new ArrayList<String>();
+        if (user.isVip)
+            extraQuotes = new ArrayList<String>(user.getExtraQuotes());
+        var stocks = BaseStock.getNames();
+        stocks.addAll(extraQuotes);
         return buildKeyboardFromArr(stocks, 6);
     }
 

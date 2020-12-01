@@ -73,10 +73,10 @@ public class TestRepository implements Repository {
         var price = transaction.getPrice();
         switch (transaction.getType()) {
             case BUY -> {
-                return getUser(transaction.getUserID()).buyStock(stock, count, price);
+                return getUser(transaction.getUserID()).buyStock(stock.getQuote().getSymbol(), count, price);
             }
             case SELL -> {
-                return getUser(transaction.getUserID()).sellStock(stock, count, price);
+                return getUser(transaction.getUserID()).sellStock(stock.getQuote().getSymbol(), count, price);
             }
             default -> {
                 return false;
@@ -87,5 +87,10 @@ public class TestRepository implements Repository {
     @Override
     public String getTransactionHistory(long userID) {
         return null;
+    }
+
+    @Override
+    public void addExtraQuoteToUser(User user, String quote) {
+
     }
 }

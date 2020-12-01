@@ -7,11 +7,11 @@ import commands.command.Command;
 import commands.command.CommandAnnotation;
 import entities.transaction.TransactionImpl;
 import enums.CommandName;
-import enums.Stock;
 import enums.UserState;
 import enums.TransactionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import yahoofinance.Stock;
 
 import java.io.IOException;
 
@@ -50,7 +50,7 @@ public class SellCommand extends Command implements ReplyCommand {
         repository.getUser(getChatID()).previousReplies.set(0, response);
         var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
         var user = BrokerBot.Repository.getUser(getChatID());
-        var count = user.getPortfolio().get(Stock.valueOf(response));
+        var count = user.getPortfolio().get(response);
         if (count == null) count = 0;
         return newMessage().setText(String.format("Таких активов у тебя %d. Сколько хочешь продать?", count))
                 .setReplyMarkup(keyboard);
@@ -62,14 +62,14 @@ public class SellCommand extends Command implements ReplyCommand {
         var strStock = repository.getUser(getChatID()).previousReplies.get(0);
         var user = repository.getUser(getChatID());
         var count = Integer.parseInt(response);
-        var stock = Stock.valueOf(strStock);
-        double price;
+        Stock stock;
         try {
-            price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
+            stock = repository.getQuote(strStock);
         } catch (IOException e) {
             e.printStackTrace();
-            return newMessage().setText("Маркет сейчас недоступен, попробуй позже");
+            return newMessage().setText(repository.Mock);
         }
+        var price = stock.getQuote().getPrice().doubleValue();
         var T = new TransactionImpl(getChatID(), stock, count, price, TransactionType.SELL);
         var result = repository.proceedTransaction(T);
         if (result)

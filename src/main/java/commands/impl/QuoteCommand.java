@@ -9,6 +9,7 @@ import enums.CommandName;
 import enums.UserState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import repository.Repository;
 import yahoofinance.Stock;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class QuoteCommand extends Command implements ReplyCommand {
         try {
             text = stockToString(BrokerBot.Repository.getQuote(response));
         } catch (IOException e) {
-            text = "Маркет сейчас недоступен, попробуй позже";
+            text = Repository.Mock;
         }
         return newMessage().setText(text).disableWebPagePreview();
     }
@@ -37,8 +38,9 @@ public class QuoteCommand extends Command implements ReplyCommand {
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_QUOTE_COMMAND);
+        var user = BrokerBot.Repository.getUser(getChatID());
         var message = newMessage().setText("Выбери акцию");
-        var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard();
+        var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard(user);
         return message.setReplyMarkup(keyboard);
     }
 

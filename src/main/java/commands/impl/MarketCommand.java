@@ -6,6 +6,7 @@ import commands.command.CommandAnnotation;
 import enums.CommandName;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import repository.Repository;
 import yahoofinance.Stock;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class MarketCommand extends Command {
         try {
             text = quotesToString(BrokerBot.Repository.getQuotes());
         } catch (IOException e) {
-            text = "Маркет сейчас недоступен, попробуй позже";
+            text = Repository.Mock;
         }
 
         return message.setText(text).enableMarkdown(true);

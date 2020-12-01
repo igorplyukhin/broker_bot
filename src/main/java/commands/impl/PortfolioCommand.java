@@ -6,7 +6,6 @@ import commands.command.CommandAnnotation;
 import enums.CommandName;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import enums.Stock;
 
 import java.util.HashMap;
 
@@ -22,8 +21,10 @@ public class PortfolioCommand extends Command {
         return newMessage().setText(portfolioToString(user.getPortfolio())).enableMarkdown(true);
     }
 
-    private String portfolioToString(HashMap<Stock, Integer> portfolio){
+    private String portfolioToString(HashMap<String, Integer> portfolio){
         var sb = new StringBuilder();
+        if (portfolio.size() == 0)
+            return "Твой портфель акций пуст";
         for (var e : portfolio.keySet())
             sb.append(e).append(": ").append(portfolio.get(e)).append(" \r\n");
         return sb.toString();

@@ -1,7 +1,7 @@
 package entities.transaction;
 
-import enums.Stock;
 import enums.TransactionType;
+import yahoofinance.Stock;
 
 import java.util.Date;
 
