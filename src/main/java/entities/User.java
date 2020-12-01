@@ -36,7 +36,7 @@ public class User {
         this.rubBalance = 50000;
         this.portfolio = new HashMap<>();
         this.isVip = false;
-        this.extraQuotes = null;
+        this.extraQuotes = new HashSet<>();
     }
 
     public long getId() {
