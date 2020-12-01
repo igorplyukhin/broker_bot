@@ -7,6 +7,7 @@ import commands.command.Command;
 import commands.command.CommandAnnotation;
 import entities.transaction.TransactionImpl;
 import enums.CommandName;
+import enums.Currency;
 import enums.UserState;
 import enums.TransactionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -38,19 +39,21 @@ public class SellCommand extends Command implements ReplyCommand {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_SELL_CHOOSE_COUNT);
         var user = BrokerBot.Repository.getUser(getChatID());
         var message = newMessage();
-        if (user.getPortfolio().keySet().size() == 0)
+        if (user.getPortfolio().keySet().size() == 0) {
+            BrokerBot.Repository.setUserState(getChatID(), UserState.DEFAULT);
             return message.setText("У тебя пустое портфолио");
+        }
         var keyboard = BrokerBot.keyboardFac.buildUserStocksKeyboard(user);
         return message.setText("Выбери акцию").setReplyMarkup(keyboard);
     }
 
-    private SendMessage handleSelectCount(String response) {
+    private SendMessage handleSelectCount(String quoteName) {
         var repository = BrokerBot.Repository;
         repository.setUserState(getChatID(), UserState.WAITING_SELL_COMMAND);
-        repository.getUser(getChatID()).previousReplies.set(0, response);
+        repository.getUser(getChatID()).previousReplies.set(0, quoteName);
         var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
         var user = BrokerBot.Repository.getUser(getChatID());
-        var count = user.getPortfolio().get(response);
+        var count = user.getPortfolio().get(quoteName);
         if (count == null) count = 0;
         return newMessage().setText(String.format("Таких активов у тебя %d. Сколько хочешь продать?", count))
                 .setReplyMarkup(keyboard);
@@ -72,9 +75,10 @@ public class SellCommand extends Command implements ReplyCommand {
         var price = stock.getQuote().getPrice().doubleValue();
         var T = new TransactionImpl(getChatID(), stock, count, price, TransactionType.SELL);
         var result = repository.proceedTransaction(T);
+        var currSymbol = Currency.valueOf(stock.getCurrency()).label;
         if (result)
-            return newMessage().setText(String.format("Ты продал %d (%s) за %.2f \nТеперь у тебя %.2f$",
-                    count, strStock, price * count, user.getUsdBalance()));
+            return newMessage().setText(String.format("Успешная продажа %d (%s) за %.2f%s\nСумма сделки: %.2f%s\n\n%s",
+                    count, strStock, price, currSymbol, price * count, currSymbol, user.toStringBalance())).enableMarkdown(true);
         else
             return newMessage().setText("У тебя нет столько акций");
 

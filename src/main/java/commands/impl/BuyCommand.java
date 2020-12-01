@@ -7,6 +7,7 @@ import commands.command.Command;
 import commands.command.CommandAnnotation;
 import entities.transaction.TransactionImpl;
 import enums.CommandName;
+import enums.Currency;
 import enums.UserState;
 import enums.TransactionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -45,9 +46,19 @@ public class BuyCommand extends Command implements ReplyCommand {
 
     private SendMessage handleSelectCount(String quoteName) {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_PURCHASE);
-        BrokerBot.Repository.getUser(getChatID()).previousReplies.set(0, quoteName);
+        var user = BrokerBot.Repository.getUser(getChatID());
+        user.previousReplies.set(0, quoteName);
         var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
-        return newMessage().setText("Выбери количество").setReplyMarkup(keyboard);
+        Stock stock;
+        try {
+            stock = BrokerBot.Repository.getQuote(quoteName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return newMessage().setText("Выбери количество").setReplyMarkup(keyboard);
+        }
+        return newMessage().setText(String.format("%s\nСейчас стоит: %.2f%s\n\n%s\nСколько хочешь купить?", stock.getName(),
+                stock.getQuote().getPrice(), Currency.valueOf(stock.getCurrency()).label,user.toStringBalance())).setReplyMarkup(keyboard);
+
     }
 
     private SendMessage handlePurchase(String strCount) {
@@ -66,11 +77,11 @@ public class BuyCommand extends Command implements ReplyCommand {
         var price = stock.getQuote().getPrice().doubleValue();
         var t = new TransactionImpl(getChatID(), stock, count, price, TransactionType.BUY);
         var result = repository.proceedTransaction(t);
-
+        var currSymbol = Currency.valueOf(stock.getCurrency()).label;
         if (result)
-            return newMessage().setText(String.format("Ты купил %d (%s) за %.2f \nТвой баланс %.2f$",
-                    count, strStock, price * count, user.getUsdBalance()));
+            return newMessage().setText(String.format("Успешная покупка %d (%s) за %.2f%s\nСумма сделки: %.2f%s\n\nТвой баланс:\n%s",
+                    count, strStock, price, currSymbol, price * count, currSymbol, user.toStringBalance())).enableMarkdown(true);
         else
-            return newMessage().setText("Недостаточно денег(");
+            return newMessage().setText("Недостаточно денег(\n\nКупи VIP аккаунт, чтобы пополнять баланс");
     }
 }

@@ -64,6 +64,11 @@ public class TestRepository implements Repository {
     }
 
     @Override
+    public void increaseUserBalance(User user) {
+
+    }
+
+    @Override
     public boolean proceedTransaction(Transaction transaction) {
         var f = new SimpleDateFormat(
                 "yyyy-MM-dd kk:mm:ss");
@@ -73,10 +78,10 @@ public class TestRepository implements Repository {
         var price = transaction.getPrice();
         switch (transaction.getType()) {
             case BUY -> {
-                return getUser(transaction.getUserID()).buyStock(stock.getQuote().getSymbol(), count, price);
+                return getUser(transaction.getUserID()).buyStock(stock, count, price);
             }
             case SELL -> {
-                return getUser(transaction.getUserID()).sellStock(stock.getQuote().getSymbol(), count, price);
+                return getUser(transaction.getUserID()).sellStock(stock, count, price);
             }
             default -> {
                 return false;

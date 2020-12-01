@@ -4,6 +4,7 @@ import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
 import enums.CommandName;
+import enums.Currency;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import repository.Repository;
@@ -34,13 +35,8 @@ public class MarketCommand extends Command {
     private String quotesToString(Collection<Stock> quotes) {
         var sb = new StringBuilder();
         for (var q : quotes) {
-            sb.append(String.format("*%s*", q.getSymbol()));
-            sb.append(": ");
-            sb.append(q.getQuote().getPrice());
-            sb.append("$ (");
-            sb.append(q.getName());
-            sb.append(")");
-            sb.append("\r\n");
+            sb.append(String.format("*%s*: %.2f%s (%s)\n", q.getSymbol(), q.getQuote().getPrice(),
+                    Currency.valueOf(q.getCurrency()).label, q.getName()));
         }
         return sb.toString();
     }

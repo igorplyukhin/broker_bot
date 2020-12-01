@@ -15,11 +15,14 @@ public class StartCommand extends Command {
 
     @Override
     public SendMessage execute() {
-        return newMessage().setText("\uD83D\uDCC8Hello, I'm Broker Bot\uD83D\uDCC8\n" +
-                "1000$ is your start-up capital\n" +
-                "You can start from /market command to see stock prices\n" +
-                "Buy some, wait a bit and try to sell at the highest price\n" +
-                "Find out if you are good trader :)");
+        return newMessage().setText("\uD83D\uDCB8 Привет! Я Добрый Брокер \uD83D\uDCB8\n\n" +
+                "Твой стартовый капитал: 5000$ и 50000₽\n\n" +
+                "Можешь начать с команды\"\uD83D\uDCCA Маркет\", чтобы посмотреть доступные акции\n\n" +
+                "\uD83D\uDD34 Купи акции\n\n" +
+                "\uD83D\uDD34 Немного подожди\n\n" +
+                "\uD83D\uDD34 Продай, когда их цена будет на пике\n\n" +
+                "⚡До конца 2020 цена на VIP аккаунт 29₽\n\n"+
+                "Удачи в бою :)");
 
     }
 }

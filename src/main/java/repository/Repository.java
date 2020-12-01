@@ -19,5 +19,6 @@ public interface Repository {
     boolean proceedTransaction(Transaction transaction);
     String getTransactionHistory(long userID);
     void addExtraQuoteToUser(User user, String quote);
+    void increaseUserBalance(User user);
 }
 

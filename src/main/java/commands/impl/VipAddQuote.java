@@ -9,15 +9,17 @@ import enums.CommandName;
 import enums.UserState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import repository.Repository;
 import yahoofinance.Stock;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @ReplyCommandAnnotation(name = UserState.WAITING_ADD_QUOTE)
 @CommandAnnotation(name = CommandName.ADD_QUOTE)
-public class AddQuote extends Command implements ReplyCommand {
-    public AddQuote(Update update) {
+public class VipAddQuote extends Command implements ReplyCommand {
+    public VipAddQuote(Update update) {
         super(update);
     }
 
@@ -29,8 +31,8 @@ public class AddQuote extends Command implements ReplyCommand {
         if (user.isVip)
             text = "Введи символ акции";
         else
-            text = "У тебя нет VIP аккаунта";
-        return newMessage().setText(text);
+            text = "У тебя нет VIP аккаунта, шалунишка";
+        return newMessage().setText(text).setReplyMarkup(new ReplyKeyboardRemove());
     }
 
     @Override
@@ -45,6 +47,7 @@ public class AddQuote extends Command implements ReplyCommand {
         var repo = BrokerBot.Repository;
         repo.setUserState(getChatID(), UserState.DEFAULT);
         var user = repo.getUser(getChatID());
+        quoteName = quoteName.toUpperCase(Locale.ROOT);
         Stock stock;
         try {
             stock = repo.getQuote(quoteName);

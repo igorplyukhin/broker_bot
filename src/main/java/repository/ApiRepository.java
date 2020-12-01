@@ -26,9 +26,7 @@ public class ApiRepository implements Repository {
 
     @Override
     public yahoofinance.Stock getQuote(java.lang.String quoteName) throws IOException {
-        var s = YahooFinance.get(quoteName);
-        System.out.println(s.getCurrency());
-        return s;
+        return YahooFinance.get(quoteName);
     }
 
     @Override
@@ -83,7 +81,7 @@ public class ApiRepository implements Repository {
         var user = getUser(transaction.getUserID());
         switch (transaction.getType()) {
             case BUY -> {
-                var res = user.buyStock(stock.getQuote().getSymbol(), count, price);
+                var res = user.buyStock(stock, count, price);
                 if (res) {
                     saveUserToBD(user);
                     saveTransactionToBD(transaction);
@@ -91,7 +89,7 @@ public class ApiRepository implements Repository {
                 return res;
             }
             case SELL -> {
-                var res = user.sellStock(stock.getQuote().getSymbol(), count, price);
+                var res = user.sellStock(stock, count, price);
                 if (res) {
                     saveUserToBD(user);
                     saveTransactionToBD(transaction);
@@ -119,6 +117,13 @@ public class ApiRepository implements Repository {
         user.addExtraQuote(quote);
         saveUserToBD(user);
     }
+
+    @Override
+    public void increaseUserBalance(User user) {
+        user.increaseBalance();
+        saveUserToBD(user);
+    }
+
 
     private void saveUserToBD(User user) {
         try {

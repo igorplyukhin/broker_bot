@@ -15,9 +15,7 @@ public class KeyboardFactory {
     private final static List<String> mainMenuButtons = Arrays.asList(CommandName.BALANCE.label, CommandName.BUY.label,
             CommandName.PORTFOLIO.label, CommandName.SELL.label, CommandName.MARKET.label, CommandName.GET_QUOTE.label,
             CommandName.BUYVIP.label, CommandName.TRANSACTIONS.label);
-    private final static List<String> VipMainMenuButtons = Arrays.asList(CommandName.BALANCE.label, CommandName.BUY.label,
-    CommandName.PORTFOLIO.label, CommandName.SELL.label, CommandName.MARKET.label, CommandName.GET_QUOTE.label,
-    CommandName.ADD_QUOTE.label, CommandName.TRANSACTIONS.label);
+    private final static List<String> VipMainMenuButtons = initVipMenuButtons();
 
     public ReplyKeyboardMarkup buildAllStocksKeyboard(User user) {
         var extraQuotes = new ArrayList<String>();
@@ -56,5 +54,12 @@ public class KeyboardFactory {
             keyboard.add(keyboardRow);
         }
         return keyboardMarkup.setKeyboard(keyboard).setResizeKeyboard(false);
+    }
+
+    private static ArrayList<String> initVipMenuButtons(){
+        var l = new ArrayList<>(mainMenuButtons);
+        l.add(CommandName.INCREASE_BALANCE.label);
+        l.add(CommandName.ADD_QUOTE.label);
+        return l;
     }
 }

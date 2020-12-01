@@ -36,17 +36,19 @@ public class UsersTable {
         var arr = (String[]) rs.getArray("portfolio").getArray();
         var extraQuotes = (String[]) rs.getArray("extra_quotes").getArray();
         var set = new HashSet<>(Arrays.asList(extraQuotes));
-        return new User(rs.getInt("id"), rs.getDouble("balance"), arr2HashMap(arr), rs.getBoolean("isVip"), set);
+        return new User(rs.getInt("id"), rs.getDouble("usd_balance"), rs.getDouble("rub_balance"),
+                arr2HashMap(arr), rs.getBoolean("isVip"), set);
     }
 
     public void updateUser(User user) throws SQLException {
         var stmt = conn.createStatement();
-        var balance = user.getUsdBalance();
+        var usdBalance = user.getUsdBalance();
+        var rubBalance = user.getRubBalance();
         var portfolio = hashMap2String(user.getPortfolio());
         var id = user.getId();
         var extraQuotes = user.getExtraQuotes();
-        var query = String.format("UPDATE %s SET balance = %f, portfolio = '%s', extra_quotes = '%s' WHERE id = %d;",
-                tableName, balance, portfolio, setToStr(extraQuotes), id);
+        var query = String.format("UPDATE %s SET usd_balance = %f, rub_balance = %f, portfolio = '%s', extra_quotes = '%s' WHERE id = %d;",
+                tableName, usdBalance, rubBalance, portfolio, setToStr(extraQuotes), id);
         stmt.executeUpdate(query);
         stmt.close();
     }
