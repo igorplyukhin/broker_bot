@@ -19,7 +19,8 @@ public class UsersTable {
 
     public User addUser(User user) throws SQLException {
         var stmt = conn.createStatement();
-        var query = String.format("INSERT INTO %s VALUES (%d, %f, '{}', false, '{}');", tableName, user.getId(), user.getUsdBalance());
+        var query = String.format("INSERT INTO %s VALUES (%d, %f, '{}', false, '{}', %f);", tableName,
+                user.getId(), user.getUsdBalance(), user.getRubBalance());
         stmt.executeUpdate(query);
         stmt.close();
         return user;

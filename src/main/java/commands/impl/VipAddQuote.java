@@ -5,6 +5,7 @@ import commands.command.Command;
 import commands.command.CommandAnnotation;
 import commands.replyCommand.ReplyCommand;
 import commands.replyCommand.ReplyCommandAnnotation;
+import enums.BaseStock;
 import enums.CommandName;
 import enums.UserState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -59,7 +60,13 @@ public class VipAddQuote extends Command implements ReplyCommand {
             return newMessage().setText("Нет такой акции");
         else if(user.getExtraQuotes().contains(quoteName))
             return newMessage().setText("Ты уже добавил эту акцию");
-        repo.addExtraQuoteToUser(user, quoteName);
-        return newMessage().setText("Успешно добавил твою акцию");
+
+        try {
+            BaseStock.valueOf(quoteName);
+            return newMessage().setText("Эта акция есть в базовом наборе");
+        }catch (IllegalArgumentException e){
+            repo.addExtraQuoteToUser(user, quoteName);
+            return newMessage().setText("Успешно добавил твою акцию");
+        }
     }
 }

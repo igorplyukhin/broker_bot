@@ -26,8 +26,7 @@ public class BrokerBot extends TelegramLongPollingBot {
             try {
                 var message = handleUpdate(update);
                 execute(message);
-            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException
-                    | IllegalAccessException | TelegramApiException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
