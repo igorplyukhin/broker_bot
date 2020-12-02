@@ -31,8 +31,10 @@ public class VipAddQuote extends Command implements ReplyCommand {
         var user = BrokerBot.Repository.getUser(getChatID());
         if (user.isVip)
             text = "Введи символ акции";
-        else
+        else {
             text = "У тебя нет VIP аккаунта, шалунишка";
+            BrokerBot.Repository.setUserState(getChatID(), UserState.DEFAULT);
+        }
         return newMessage().setText(text).setReplyMarkup(new ReplyKeyboardRemove());
     }
 

@@ -4,6 +4,7 @@ import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
 import enums.CommandName;
+import enums.UserState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -17,8 +18,10 @@ public class VipIncreaseBalance extends Command {
     @Override
     public SendMessage execute() {
         var user = BrokerBot.Repository.getUser(getChatID());
-        if (!user.isVip)
+        if (!user.isVip) {
+            BrokerBot.Repository.setUserState(getChatID(), UserState.DEFAULT);
             return newMessage().setText("У тебя нет VIP аккаунта, шалунишка");
+        }
         BrokerBot.Repository.increaseUserBalance(user);
         return newMessage().setText(String.format("Лови аптечку:)\n\nТеперь у тебя:\n%s", user.toStringBalance()));
     }
