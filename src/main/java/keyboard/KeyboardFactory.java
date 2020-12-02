@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class KeyboardFactory {
@@ -23,11 +24,13 @@ public class KeyboardFactory {
             extraQuotes = new ArrayList<String>(user.getExtraQuotes());
         var stocks = BaseStock.getNames();
         stocks.addAll(extraQuotes);
+        Collections.sort(stocks);
         return buildKeyboardFromArr(stocks, 6);
     }
 
     public ReplyKeyboardMarkup buildUserStocksKeyboard(User user) {
-        var portfolio = new ArrayList<Object>(user.getPortfolio().keySet());
+        var portfolio = new ArrayList<>(user.getPortfolio().keySet());
+        Collections.sort(portfolio);
         return buildKeyboardFromArr(portfolio, 6);
     }
 

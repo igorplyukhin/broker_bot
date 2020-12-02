@@ -31,7 +31,7 @@ public class TestRepository implements Repository {
     }
 
     @Override
-    public Collection<Stock> getQuotes() {
+    public Collection<Stock> getQuotes(long userID) {
         return quotes.values();
     }
 

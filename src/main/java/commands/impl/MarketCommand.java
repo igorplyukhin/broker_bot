@@ -11,7 +11,7 @@ import repository.Repository;
 import yahoofinance.Stock;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.*;
 
 @CommandAnnotation(name = CommandName.MARKET, description = "Show user's balance")
 public class MarketCommand extends Command {
@@ -24,7 +24,7 @@ public class MarketCommand extends Command {
         var message = newMessage();
         String text;
         try {
-            text = quotesToString(BrokerBot.Repository.getQuotes());
+            text = quotesToString(BrokerBot.Repository.getQuotes(getChatID()));
         } catch (IOException e) {
             text = Repository.Mock;
         }
@@ -34,7 +34,14 @@ public class MarketCommand extends Command {
 
     private String quotesToString(Collection<Stock> quotes) {
         var sb = new StringBuilder();
-        for (var q : quotes) {
+        var a = new ArrayList<>(quotes);
+        a.sort(new Comparator<Stock>() {
+            @Override
+            public int compare(Stock stock, Stock t1) {
+                return stock.getSymbol().compareTo(t1.getSymbol());
+            }
+        });
+        for (var q : a) {
             sb.append(String.format("*%s*: %.2f%s (%s)\n", q.getSymbol(), q.getQuote().getPrice(),
                     Currency.valueOf(q.getCurrency()).label, q.getName()));
         }

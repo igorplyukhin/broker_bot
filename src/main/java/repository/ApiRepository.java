@@ -10,8 +10,7 @@ import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
@@ -30,8 +29,10 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public Collection<yahoofinance.Stock> getQuotes() throws IOException {
-        return YahooFinance.get(stocks).values();
+    public Collection<yahoofinance.Stock> getQuotes(long userID) throws IOException {
+        var allQuotes = new HashSet<>(getUser(userID).getExtraQuotes());
+        allQuotes.addAll(Arrays.asList(stocks));
+        return YahooFinance.get(allQuotes.toArray(new String[0])).values();
     }
 
     @Override
