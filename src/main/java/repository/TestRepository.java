@@ -31,7 +31,7 @@ public class TestRepository implements Repository {
     }
 
     @Override
-    public Collection<Stock> getQuotes() {
+    public Collection<Stock> getQuotes(long userID) {
         return quotes.values();
     }
 
@@ -64,6 +64,11 @@ public class TestRepository implements Repository {
     }
 
     @Override
+    public void increaseUserBalance(User user) {
+
+    }
+
+    @Override
     public boolean proceedTransaction(Transaction transaction) {
         var f = new SimpleDateFormat(
                 "yyyy-MM-dd kk:mm:ss");
@@ -87,5 +92,10 @@ public class TestRepository implements Repository {
     @Override
     public String getTransactionHistory(long userID) {
         return null;
+    }
+
+    @Override
+    public void addExtraQuoteToUser(User user, String quote) {
+
     }
 }

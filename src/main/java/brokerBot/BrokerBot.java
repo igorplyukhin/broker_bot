@@ -5,6 +5,7 @@ import db.DBController;
 import db.tables.TransactionsTable;
 import db.tables.UsersTable;
 import enums.UserState;
+import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class BrokerBot extends TelegramLongPollingBot {
     public static final Repository Repository = new ApiRepository(new DBController());
-
+    public static final KeyboardFactory keyboardFac = new KeyboardFactory();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -25,8 +26,7 @@ public class BrokerBot extends TelegramLongPollingBot {
             try {
                 var message = handleUpdate(update);
                 execute(message);
-            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException
-                    | IllegalAccessException | TelegramApiException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -40,24 +40,18 @@ public class BrokerBot extends TelegramLongPollingBot {
             return CommandsManager.getReplyCommand(userState).getDeclaredConstructor(Update.class)
                     .newInstance(update).handleReply(userState, userMessage);
         } else {
-            var commandName = getCommandName(userMessage);
-            return CommandsManager.getCommand(commandName).getDeclaredConstructor(Update.class)
+            return CommandsManager.getCommand(userMessage).getDeclaredConstructor(Update.class)
                     .newInstance(update).execute();
         }
     }
 
     @Override
     public String getBotUsername() {
-        return "java_broker_bot";
+        return "DobryiBrokerBot";
     }
 
     @Override
     public String getBotToken() {
-        return System.getenv("BrokerBotToken");
-    }
-
-    private String getCommandName(String text) {
-        String[] splitText = text.split(" ");
-        return splitText[0];
+        return System.getenv("DobryiToken");
     }
 }

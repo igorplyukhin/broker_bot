@@ -1,25 +1,24 @@
 package repository;
 
 import db.DBController;
-import db.tables.TransactionsTable;
-import db.tables.UsersTable;
 import db.exceptions.SQLNoDataFoundException;
 import entities.User;
 import entities.transaction.Transaction;
-import enums.Stock;
+import enums.BaseStock;
 import enums.UserState;
 import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class ApiRepository implements Repository {
     private static final HashMap<Long, User> users = new HashMap<>();
     private static final HashMap<Long, UserState> states = new HashMap<>();
-    private static final String[] stocks = Stock.getNames();
+    private static final String[] stocks = BaseStock.getNames().toArray(String[]::new);
     private final DBController dbController;
+
+
     public ApiRepository(DBController dbController) {
         this.dbController = dbController;
     }
@@ -30,8 +29,10 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public Collection<yahoofinance.Stock> getQuotes() throws IOException {
-        return YahooFinance.get(stocks).values();
+    public Collection<yahoofinance.Stock> getQuotes(long userID) throws IOException {
+        var allQuotes = new HashSet<>(getUser(userID).getExtraQuotes());
+        allQuotes.addAll(Arrays.asList(stocks));
+        return YahooFinance.get(allQuotes.toArray(new String[0])).values();
     }
 
     @Override
@@ -103,7 +104,7 @@ public class ApiRepository implements Repository {
     }
 
     @Override
-    public String getTransactionHistory(long userID){
+    public String getTransactionHistory(long userID) {
         try {
             return dbController.transactionsTable.getTransactions(userID);
         } catch (SQLException throwables) {
@@ -111,6 +112,19 @@ public class ApiRepository implements Repository {
             return "DB ERROR";
         }
     }
+
+    @Override
+    public void addExtraQuoteToUser(User user, String quote) {
+        user.addExtraQuote(quote);
+        saveUserToBD(user);
+    }
+
+    @Override
+    public void increaseUserBalance(User user) {
+        user.increaseBalance();
+        saveUserToBD(user);
+    }
+
 
     private void saveUserToBD(User user) {
         try {

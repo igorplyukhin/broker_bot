@@ -6,20 +6,21 @@ import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
 import entities.transaction.TransactionImpl;
-import enums.Stock;
+import enums.CommandName;
+import enums.Currency;
 import enums.UserState;
 import enums.TransactionType;
-import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import repository.Repository;
+import yahoofinance.Stock;
 
 import java.io.IOException;
 
 
 @ReplyCommandAnnotation(name = UserState.WAITING_BUY_PURCHASE, description = "buy stock")
 @ReplyCommandAnnotation(name = UserState.WAITING_BUY_CHOOSE_COUNT, description = "aaa")
-@CommandAnnotation(name = "/buy", description = "buy stock")
+@CommandAnnotation(name = CommandName.BUY, description = "buy stock")
 public class BuyCommand extends Command implements ReplyCommand {
     public BuyCommand(Update update) {
         super(update);
@@ -30,47 +31,57 @@ public class BuyCommand extends Command implements ReplyCommand {
         return switch (userState) {
             case WAITING_BUY_CHOOSE_COUNT -> handleSelectCount(response);
             case WAITING_BUY_PURCHASE -> handlePurchase(response);
-            default -> newMessage().setText("default");
+            default -> newMessage().setText("Critical error");
         };
     }
 
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_CHOOSE_COUNT);
-        var message = newMessage().setText("Choose quote to buy");
-        var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
+        var user = BrokerBot.Repository.getUser(getChatID());
+        var message = newMessage().setText("Выбери акцию");
+        var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard(user);
         return message.setReplyMarkup(keyboard);
     }
 
-    private SendMessage handleSelectCount(String response) {
+    private SendMessage handleSelectCount(String quoteName) {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_BUY_PURCHASE);
-        BrokerBot.Repository.getUser(getChatID()).previousReplies.set(0, response);
-        var keyboard = new KeyboardFactory().buildNumberKeyboard();
-        return newMessage().setText("Choose number of stocks to buy").setReplyMarkup(keyboard);
+        var user = BrokerBot.Repository.getUser(getChatID());
+        user.previousReplies.set(0, quoteName);
+        var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
+        Stock stock;
+        try {
+            stock = BrokerBot.Repository.getQuote(quoteName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return newMessage().setText("Выбери количество").setReplyMarkup(keyboard);
+        }
+        return newMessage().setText(String.format("%s\nСейчас стоит: %.2f%s\n\n%s\nСколько хочешь купить?", stock.getName(),
+                stock.getQuote().getPrice(), Currency.valueOf(stock.getCurrency()).label,user.toStringBalance())).setReplyMarkup(keyboard);
+
     }
 
-    private SendMessage handlePurchase(String response) {
+    private SendMessage handlePurchase(String strCount) {
         var repository = BrokerBot.Repository;
         repository.setUserState(getChatID(), UserState.DEFAULT);
         var user = repository.getUser(getChatID());
         var strStock = user.previousReplies.get(0);
-        var message = newMessage().setReplyMarkup(new ReplyKeyboardRemove());
-        var stock = Stock.valueOf(strStock);
-        var count = Integer.parseInt(response);
-        double price;
+        var count = Integer.parseInt(strCount);
+        Stock stock;
         try {
-            price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
+            stock = repository.getQuote(strStock);
         } catch (IOException e) {
             e.printStackTrace();
-            return message.setText("Market is unreachable now");
+            return newMessage().setText(repository.Mock);
         }
+        var price = stock.getQuote().getPrice().doubleValue();
         var t = new TransactionImpl(getChatID(), stock, count, price, TransactionType.BUY);
         var result = repository.proceedTransaction(t);
-
+        var currSymbol = Currency.valueOf(stock.getCurrency()).label;
         if (result)
-            return message.setText(String.format("You bought %d %s stock(s) for %.2f \nNow you have %.2f$",
-                    count, strStock, price * count, user.getUsdBalance()));
+            return newMessage().setText(String.format("Успешная покупка %d (%s) за %.2f%s\nСумма сделки: %.2f%s\n\nТвой баланс:\n%s",
+                    count, strStock, price, currSymbol, price * count, currSymbol, user.toStringBalance())).enableMarkdown(true);
         else
-            return message.setText("You don't have enough money");
+            return newMessage().setText("Недостаточно денег(\n\nКупи VIP аккаунт, чтобы пополнять баланс");
     }
 }

@@ -5,19 +5,19 @@ import commands.replyCommand.ReplyCommand;
 import commands.replyCommand.ReplyCommandAnnotation;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
+import enums.CommandName;
 import enums.UserState;
-import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import repository.Repository;
 import yahoofinance.Stock;
 
 import java.io.IOException;
 
 @ReplyCommandAnnotation(name = UserState.WAITING_QUOTE_COMMAND, description = "Send quote price to user")
-@CommandAnnotation(name = "/get_quote", description = "Show user's balance")
+@CommandAnnotation(name = CommandName.GET_QUOTE, description = "Show user's balance")
 public class QuoteCommand extends Command implements ReplyCommand {
-    private final String urlPrefix = "https://finance.yahoo.com/quote/";
+    private static final String urlPrefix = "https://finance.yahoo.com/quote/";
 
     public QuoteCommand(Update update) {
         super(update);
@@ -30,16 +30,17 @@ public class QuoteCommand extends Command implements ReplyCommand {
         try {
             text = stockToString(BrokerBot.Repository.getQuote(response));
         } catch (IOException e) {
-            text = "API is unreachable now";
+            text = Repository.Mock;
         }
-        return newMessage().setText(text).setReplyMarkup(new ReplyKeyboardRemove()).disableWebPagePreview();
+        return newMessage().setText(text).disableWebPagePreview();
     }
 
     @Override
     public SendMessage execute() {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_QUOTE_COMMAND);
-        var message = newMessage().setText("Choose quote");
-        var keyboard = new KeyboardFactory().buildAllStocksKeyboard();
+        var user = BrokerBot.Repository.getUser(getChatID());
+        var message = newMessage().setText("Выбери акцию");
+        var keyboard = BrokerBot.keyboardFac.buildAllStocksKeyboard(user);
         return message.setReplyMarkup(keyboard);
     }
 

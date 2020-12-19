@@ -19,7 +19,7 @@ public class CommandsManager {
         for (var command : commandClasses) {
             if (command.isAnnotationPresent(CommandAnnotation.class)) {
                 var annotation = command.getDeclaredAnnotation(CommandAnnotation.class);
-                commands.put(annotation.name(), command);
+                commands.put(annotation.name().label, command);
             }
         }
 

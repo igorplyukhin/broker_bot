@@ -6,20 +6,20 @@ import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
 import entities.transaction.TransactionImpl;
-import enums.Stock;
+import enums.CommandName;
+import enums.Currency;
 import enums.UserState;
 import enums.TransactionType;
-import keyboard.KeyboardFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import yahoofinance.Stock;
 
 import java.io.IOException;
 
 
 @ReplyCommandAnnotation(name = UserState.WAITING_SELL_CHOOSE_COUNT, description = "bla")
 @ReplyCommandAnnotation(name = UserState.WAITING_SELL_COMMAND, description = "blabla")
-@CommandAnnotation(name = "/sell", description = "sell command")
+@CommandAnnotation(name = CommandName.SELL, description = "sell command")
 public class SellCommand extends Command implements ReplyCommand {
     public SellCommand(Update update) {
         super(update);
@@ -39,42 +39,48 @@ public class SellCommand extends Command implements ReplyCommand {
         BrokerBot.Repository.setUserState(getChatID(), UserState.WAITING_SELL_CHOOSE_COUNT);
         var user = BrokerBot.Repository.getUser(getChatID());
         var message = newMessage();
-        if (user.getPortfolio().keySet().size() == 0)
-            return message.setText("You portfolio is empty");
-        var keyboard = new KeyboardFactory().buildUserStocksKeyboard(user);
-        return message.setText("Choose quote to sell").setReplyMarkup(keyboard);
+        if (user.getPortfolio().keySet().size() == 0) {
+            BrokerBot.Repository.setUserState(getChatID(), UserState.DEFAULT);
+            return message.setText("У тебя пустое портфолио");
+        }
+        var keyboard = BrokerBot.keyboardFac.buildUserStocksKeyboard(user);
+        return message.setText("Выбери акцию").setReplyMarkup(keyboard);
     }
 
-    private SendMessage handleSelectCount(String response) {
+    private SendMessage handleSelectCount(String quoteName) {
         var repository = BrokerBot.Repository;
         repository.setUserState(getChatID(), UserState.WAITING_SELL_COMMAND);
-        repository.getUser(getChatID()).previousReplies.set(0, response);
-        var keyboard = new KeyboardFactory().buildNumberKeyboard();
-        return newMessage().setText("Choose number of stocks to sell").setReplyMarkup(keyboard);
+        repository.getUser(getChatID()).previousReplies.set(0, quoteName);
+        var keyboard = BrokerBot.keyboardFac.buildNumberKeyboard();
+        var user = BrokerBot.Repository.getUser(getChatID());
+        var count = user.getPortfolio().get(quoteName);
+        if (count == null) count = 0;
+        return newMessage().setText(String.format("Таких активов у тебя %d. Сколько хочешь продать?", count))
+                .setReplyMarkup(keyboard);
     }
 
     private SendMessage handleSell(String response) {
         var repository = BrokerBot.Repository;
         repository.setUserState(getChatID(), UserState.DEFAULT);
         var strStock = repository.getUser(getChatID()).previousReplies.get(0);
-        var message = newMessage().setReplyMarkup(new ReplyKeyboardRemove());
         var user = repository.getUser(getChatID());
         var count = Integer.parseInt(response);
-        var stock = Stock.valueOf(strStock);
-        double price;
+        Stock stock;
         try {
-            price = repository.getQuote(strStock).getQuote().getPrice().doubleValue();
+            stock = repository.getQuote(strStock);
         } catch (IOException e) {
             e.printStackTrace();
-            return message.setText("API unreachable try later");
+            return newMessage().setText(repository.Mock);
         }
+        var price = stock.getQuote().getPrice().doubleValue();
         var T = new TransactionImpl(getChatID(), stock, count, price, TransactionType.SELL);
         var result = repository.proceedTransaction(T);
+        var currSymbol = Currency.valueOf(stock.getCurrency()).label;
         if (result)
-            return message.setText(String.format("You sold %d %s stock(s) for %.2f \nNow you have %.2f$",
-                    count, strStock, price * count, user.getUsdBalance()));
+            return newMessage().setText(String.format("Успешная продажа %d (%s) за %.2f%s\nСумма сделки: %.2f%s\n\n%s",
+                    count, strStock, price, currSymbol, price * count, currSymbol, user.toStringBalance())).enableMarkdown(true);
         else
-            return message.setText("You don't have this amount of stocks");
+            return newMessage().setText("У тебя нет столько акций");
 
     }
 }

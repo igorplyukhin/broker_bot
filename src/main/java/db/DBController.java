@@ -14,10 +14,10 @@ public class DBController {
 
     public DBController() {
     }
-
     private Connection initConnection(){
+        var pass = System.getenv("BrokerDBPass");
         try {
-            return DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/broker_bot", "broker", "VerySavePassword");
+            return DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/broker_bot", "broker", pass);
         } catch (SQLException e) {
             System.out.println("Connection to DB Failed!!!");
             e.printStackTrace(System.out);

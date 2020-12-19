@@ -3,14 +3,17 @@ package commands.impl;
 import brokerBot.BrokerBot;
 import commands.command.Command;
 import commands.command.CommandAnnotation;
+import enums.CommandName;
+import enums.Currency;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import repository.Repository;
 import yahoofinance.Stock;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.*;
 
-@CommandAnnotation(name = "/market", description = "Show user's balance")
+@CommandAnnotation(name = CommandName.MARKET, description = "Show user's balance")
 public class MarketCommand extends Command {
     public MarketCommand(Update update) {
         super(update);
@@ -21,24 +24,26 @@ public class MarketCommand extends Command {
         var message = newMessage();
         String text;
         try {
-            text = quotesToString(BrokerBot.Repository.getQuotes());
+            text = quotesToString(BrokerBot.Repository.getQuotes(getChatID()));
         } catch (IOException e) {
-            text = "API service unreachable now";
+            text = Repository.Mock;
         }
 
-       return message.setText(text);
+        return message.setText(text).enableMarkdown(true);
     }
 
     private String quotesToString(Collection<Stock> quotes) {
         var sb = new StringBuilder();
-        for (var q : quotes) {
-            sb.append(q.getSymbol());
-            sb.append(": ");
-            sb.append(q.getQuote().getPrice());
-            sb.append("$ (");
-            sb.append(q.getName());
-            sb.append(")");
-            sb.append("\r\n");
+        var a = new ArrayList<>(quotes);
+        a.sort(new Comparator<Stock>() {
+            @Override
+            public int compare(Stock stock, Stock t1) {
+                return stock.getSymbol().compareTo(t1.getSymbol());
+            }
+        });
+        for (var q : a) {
+            sb.append(String.format("*%s*: %.2f%s (%s)\n", q.getSymbol(), q.getQuote().getPrice(),
+                    Currency.valueOf(q.getCurrency()).label, q.getName()));
         }
         return sb.toString();
     }

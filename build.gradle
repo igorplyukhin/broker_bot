@@ -2,10 +2,6 @@ plugins {
     id 'java-library'
     id 'application'
 }
-/*sourceCompatibility is "Java version compatibility to use when compiling Java source."
-targetCompatibility is "Java version to generate classes for."*/
-sourceCompatibility = JavaVersion.VERSION_14
-targetCompatibility = JavaVersion.VERSION_14
 
 //To run the class name from command line using gradle run
 mainClassName = 'Program'
